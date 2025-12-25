@@ -2,7 +2,6 @@ import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
 import { leadFormSchema } from '$lib/schemas/lead';
 import { calculateEligibility, getEligibleGrantNames, getOverallScore } from '$lib/scoring';
-import { createServerSupabaseClient } from '$lib/supabase/server';
 import type { Grant } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
@@ -13,17 +12,15 @@ export const load: PageServerLoad = async () => {
 };
 
 export const actions: Actions = {
-	default: async ({ request, cookies }) => {
+	default: async ({ request, locals }) => {
 		const form = await superValidate(request, zod(leadFormSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
 		}
 
-		const supabase = createServerSupabaseClient(cookies);
-
 		// Fetch active grants for eligibility calculation
-		const { data: grants } = await supabase.from('grants').select('*').eq('is_active', true);
+		const { data: grants } = await locals.supabase.from('grants').select('*').eq('is_active', true);
 
 		// Calculate eligibility score
 		const eligibilityResults = calculateEligibility(form.data as any, (grants ?? []) as Grant[]);
@@ -50,7 +47,7 @@ export const actions: Actions = {
 			eligible_grants: eligibleGrants
 		};
 
-		const { error } = await supabase.from('leads').insert(leadData);
+		const { error } = await locals.supabase.from('leads').insert(leadData);
 
 		if (error) {
 			console.error('Error inserting lead:', error);

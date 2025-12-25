@@ -9,19 +9,30 @@ export const handle: Handle = async ({ event, resolve }) => {
 				return event.cookies.getAll();
 			},
 			setAll(cookiesToSet) {
-				cookiesToSet.forEach(({ name, value, options }) => {
+				for (const { name, value, options } of cookiesToSet) {
 					event.cookies.set(name, value, { ...options, path: '/' });
-				});
+				}
 			}
 		}
 	});
 
-	event.locals.getSession = async () => {
+	/**
+	 * Unlike `getSession`, which uses the session from the cookie (insecure for authorization),
+	 * `getUser` validates the user against the database.
+	 */
+	const {
+		data: { user }
+	} = await event.locals.supabase.auth.getUser();
+
+	event.locals.user = user;
+	event.locals.session = null; // Session is derived from user + cookie if needed, but for guards, user is key.
+
+	if (user) {
 		const {
 			data: { session }
 		} = await event.locals.supabase.auth.getSession();
-		return session;
-	};
+		event.locals.session = session;
+	}
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
