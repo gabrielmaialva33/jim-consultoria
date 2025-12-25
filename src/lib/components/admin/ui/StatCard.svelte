@@ -19,7 +19,7 @@ const variantClasses = {
 </script>
 
 <div class="stat-card">
-	<div class="flex items-center gap-4">
+	<div class="flex items-start gap-4">
 		<div class="stat-card-icon {variantClasses[variant]}">
 			{#if icon === 'users'}
 				<svg class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
