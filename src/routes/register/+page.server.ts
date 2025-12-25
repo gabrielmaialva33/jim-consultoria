@@ -1,19 +1,19 @@
 import { fail, message, superValidate } from 'sveltekit-superforms';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { leadFormSchema } from '$lib/schemas/lead';
 import { calculateEligibility, getEligibleGrantNames, getOverallScore } from '$lib/scoring';
 import type { Grant } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-	const form = await superValidate(zod(leadFormSchema));
+	const form = await superValidate(zod4(leadFormSchema));
 
 	return { form };
 };
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		const form = await superValidate(request, zod(leadFormSchema));
+		const form = await superValidate(request, zod4(leadFormSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
