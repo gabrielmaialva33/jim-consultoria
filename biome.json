@@ -1,5 +1,5 @@
 {
-	"$schema": "https://biomejs.dev/schemas/2.3.10/schema.json",
+	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
 	"vcs": {
 		"enabled": true,
 		"clientKind": "git",
@@ -21,26 +21,27 @@
 		"rules": {
 			"recommended": true,
 			"complexity": {
-				"noForEach": "off",
-				"useOptionalChain": "warn"
+				"noForEach": "warn",
+				"useOptionalChain": "error"
 			},
 			"correctness": {
-				"noUnusedImports": "warn",
-				"noUnusedVariables": "warn"
+				"noUnusedImports": "error",
+				"noUnusedVariables": "error",
+				"noConstAssign": "error"
 			},
 			"style": {
-				"noNonNullAssertion": "off",
-				"useConst": "warn",
-				"useImportType": "warn",
-				"noParameterAssign": "off"
+				"noNonNullAssertion": "warn",
+				"useConst": "error",
+				"useImportType": "error",
+				"noParameterAssign": "warn"
 			},
 			"suspicious": {
-				"noExplicitAny": "off",
-				"noConfusingVoidType": "off",
-				"noAssignInExpressions": "off"
+				"noExplicitAny": "warn",
+				"noConfusingVoidType": "warn",
+				"noAssignInExpressions": "error"
 			},
 			"a11y": {
-				"useKeyWithClickEvents": "off",
+				"useKeyWithClickEvents": "warn",
 				"noSvgWithoutTitle": "off"
 			}
 		}
