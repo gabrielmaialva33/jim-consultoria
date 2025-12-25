@@ -4,7 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 export const load: PageServerLoad = async ({ url, locals }) => {
 	const status = url.searchParams.get('status') || '';
 	const search = url.searchParams.get('search') || '';
-	const page = parseInt(url.searchParams.get('page') || '1');
+	const page = parseInt(url.searchParams.get('page') || '1', 10);
 	const perPage = 10;
 
 	let query = locals.supabase

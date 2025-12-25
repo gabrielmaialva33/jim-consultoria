@@ -1,6 +1,6 @@
 import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { type LeadFormData, leadFormSchema } from '$lib/schemas/lead';
+import { leadFormSchema } from '$lib/schemas/lead';
 import { calculateEligibility, getEligibleGrantNames, getOverallScore } from '$lib/scoring';
 import { createServerSupabaseClient } from '$lib/supabase/server';
 import type { Grant } from '$lib/supabase/types';

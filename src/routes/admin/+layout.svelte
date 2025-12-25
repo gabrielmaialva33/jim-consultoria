@@ -4,7 +4,7 @@ import type { LayoutData } from './$types';
 
 const { data, children }: { data: LayoutData; children: any } = $props();
 
-const menuOpen = $state(false);
+let menuOpen = $state(false);
 
 async function logout() {
 	await fetch('/auth/logout', { method: 'POST' });

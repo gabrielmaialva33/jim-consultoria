@@ -4,7 +4,7 @@ import type { ActionData } from './$types';
 
 const { form }: { form: ActionData } = $props();
 
-const loading = $state(false);
+let loading = $state(false);
 </script>
 
 <svelte:head>

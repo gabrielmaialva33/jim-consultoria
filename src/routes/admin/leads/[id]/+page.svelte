@@ -11,8 +11,8 @@ import type { ActionData, PageData } from './$types';
 
 const { data, form }: { data: PageData; form: ActionData } = $props();
 
-const showNoteForm = $state(false);
-const showTaskForm = $state(false);
+let showNoteForm = $state(false);
+let showTaskForm = $state(false);
 
 function formatDate(dateStr: string) {
 	return new Date(dateStr).toLocaleDateString('pt-BR', {
