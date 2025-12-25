@@ -38,7 +38,7 @@
       <!-- CTA Buttons -->
       <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a
-          href="/cadastro"
+          href="/register"
           class="btn-primary w-full bg-white text-brand-700 hover:bg-brand-50 sm:w-auto px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
         >
           Quero ser aprovado

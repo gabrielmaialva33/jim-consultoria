@@ -107,7 +107,7 @@ const timeline = [
         Não deixe para a última hora! Projetos bem preparados têm muito mais chances de aprovação.
       </p>
       <a
-        href="/cadastro"
+        href="/register"
         class="mt-4 inline-flex items-center rounded-lg bg-white px-6 py-2 font-medium text-brand-700 hover:bg-brand-50 transition-colors"
       >
         Começar agora

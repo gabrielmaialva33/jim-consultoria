@@ -109,7 +109,7 @@ const editais = [
     <!-- CTA -->
     <div class="mt-12 text-center">
       <a
-        href="/cadastro"
+        href="/register"
         class="btn-primary px-8 py-3 text-lg"
       >
         Verificar minha elegibilidade
