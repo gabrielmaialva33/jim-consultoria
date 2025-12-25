@@ -49,3 +49,6 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
+          build-args: |
+            PUBLIC_SUPABASE_URL=${{ secrets.PUBLIC_SUPABASE_URL }}
+            PUBLIC_SUPABASE_ANON_KEY=${{ secrets.PUBLIC_SUPABASE_ANON_KEY }}

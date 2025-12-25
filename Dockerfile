@@ -6,6 +6,14 @@
 # =============================================================================
 FROM node:22-alpine AS builder
 
+# Build arguments for SvelteKit static env
+ARG PUBLIC_SUPABASE_URL
+ARG PUBLIC_SUPABASE_ANON_KEY
+
+# Set as env for build
+ENV PUBLIC_SUPABASE_URL=${PUBLIC_SUPABASE_URL}
+ENV PUBLIC_SUPABASE_ANON_KEY=${PUBLIC_SUPABASE_ANON_KEY}
+
 # Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
