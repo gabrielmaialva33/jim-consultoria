@@ -3,17 +3,7 @@
 </script>
 
 <section class="relative overflow-hidden bg-gradient-to-br from-brand-600 via-brand-700 to-brand-900 py-20 lg:py-32">
-  <!-- Background pattern -->
-  <div class="absolute inset-0 opacity-10">
-    <svg class="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-      <defs>
-        <pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse">
-          <path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5"/>
-        </pattern>
-      </defs>
-      <rect width="100%" height="100%" fill="url(#grid)"/>
-    </svg>
-  </div>
+
 
   <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
     <div class="text-center">

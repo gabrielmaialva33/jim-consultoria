@@ -57,9 +57,9 @@ const timeline = [
         <div class="space-y-12">
           {#each timeline as item, index}
             <div class="relative flex items-start lg:items-center">
-              <!-- Left side (date) - hidden on mobile -->
-              <div class="hidden lg:flex lg:w-1/2 lg:justify-end lg:pr-8">
-                {#if index % 2 === 0}
+              <!-- Left side (even items on desktop) -->
+              {#if index % 2 === 0}
+                <div class="hidden lg:flex lg:w-1/2 lg:justify-end lg:pr-8">
                   <div class="text-right">
                     <span class="{item.badgeClass}">
                       {item.date}
@@ -67,8 +67,10 @@ const timeline = [
                     <h3 class="mt-2 text-lg font-bold text-gray-900">{item.title}</h3>
                     <p class="mt-1 text-gray-600">{item.description}</p>
                   </div>
-                {/if}
-              </div>
+                </div>
+              {:else}
+                <div class="hidden lg:block lg:w-1/2"></div>
+              {/if}
 
               <!-- Circle marker -->
               <div class="absolute left-4 lg:left-1/2 lg:-ml-2">
@@ -79,14 +81,10 @@ const timeline = [
                 </div>
               </div>
 
-              <!-- Right side (content) - or mobile content -->
-              <div class="ml-12 lg:ml-0 lg:w-1/2 lg:pl-8 {index % 2 === 0 ? 'lg:hidden' : ''}">
-                <!-- Mobile date badge -->
-                <span class="{item.badgeClass} lg:hidden">
-                  {item.date}
-                </span>
-                <!-- Desktop odd items -->
+              <!-- Right side (odd items on desktop, all items on mobile) -->
+              <div class="ml-12 lg:ml-0 lg:w-1/2 lg:pl-8">
                 {#if index % 2 !== 0}
+                  <!-- Desktop odd items -->
                   <div class="hidden lg:block">
                     <span class="{item.badgeClass}">
                       {item.date}
@@ -95,9 +93,14 @@ const timeline = [
                     <p class="mt-1 text-gray-600">{item.description}</p>
                   </div>
                 {/if}
-                <!-- Mobile content -->
-                <h3 class="mt-2 text-lg font-bold text-gray-900 lg:hidden">{item.title}</h3>
-                <p class="mt-1 text-gray-600 lg:hidden">{item.description}</p>
+                <!-- Mobile content (all items) -->
+                <div class="lg:hidden">
+                  <span class="{item.badgeClass}">
+                    {item.date}
+                  </span>
+                  <h3 class="mt-2 text-lg font-bold text-gray-900">{item.title}</h3>
+                  <p class="mt-1 text-gray-600">{item.description}</p>
+                </div>
               </div>
             </div>
           {/each}

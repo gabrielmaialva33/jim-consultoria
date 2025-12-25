@@ -2,19 +2,19 @@
 const currentYear = new Date().getFullYear();
 
 const links = {
-	editais: [
+	grants: [
 		{ name: 'ProAC ICMS', href: 'https://fomentocultsp.sp.gov.br' },
 		{ name: 'Lei Rouanet', href: 'https://salic.cultura.gov.br' },
 		{ name: 'PNAB', href: 'https://www.cultura.sp.gov.br' }
 	],
-	empresa: [
-		{ name: 'Sobre nós', href: '#' },
-		{ name: 'Blog', href: '#' },
-		{ name: 'Contato', href: '#' }
+	company: [
+		{ name: 'Sobre nós', href: '/about' },
+		{ name: 'Blog', href: '/blog' },
+		{ name: 'Contato', href: '/contact' }
 	],
 	legal: [
-		{ name: 'Privacidade', href: '#' },
-		{ name: 'Termos de uso', href: '#' }
+		{ name: 'Privacidade', href: '/privacy' },
+		{ name: 'Termos de uso', href: '/terms' }
 	]
 };
 </script>
@@ -53,7 +53,7 @@ const links = {
         <div>
           <h4 class="text-sm font-semibold uppercase tracking-wider text-white">Editais</h4>
           <ul class="mt-4 space-y-3">
-            {#each links.editais as link}
+            {#each links.grants as link}
               <li>
                 <a href={link.href} target="_blank" rel="noopener noreferrer" class="text-sm hover:text-white transition-all duration-200 hover:translate-x-1 inline-block">
                   {link.name}
@@ -65,7 +65,7 @@ const links = {
         <div>
           <h4 class="text-sm font-semibold uppercase tracking-wider text-white">Empresa</h4>
           <ul class="mt-4 space-y-3">
-            {#each links.empresa as link}
+            {#each links.company as link}
               <li>
                 <a href={link.href} class="text-sm hover:text-white transition-all duration-200 hover:translate-x-1 inline-block">
                   {link.name}
