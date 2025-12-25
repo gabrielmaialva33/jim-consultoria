@@ -64,7 +64,7 @@ let loading = $state(false);
         <button
           type="submit"
           disabled={loading}
-          class="w-full btn-primary py-3 text-base disabled:opacity-50"
+          class="btn btn-primary w-full rounded-lg py-3 text-base disabled:opacity-50"
         >
           {#if loading}
             Entrando...
