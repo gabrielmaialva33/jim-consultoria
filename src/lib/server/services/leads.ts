@@ -1,10 +1,10 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
-import type { Database } from '$lib/supabase/types';
+import type { Database, LeadInsert } from '$lib/supabase/types';
 
 export class LeadsService {
 	constructor(private supabase: SupabaseClient<Database>) {}
 
-	async createLead(data: { name: string; email: string; phone?: string; interest?: string }) {
+	async createLead(data: LeadInsert) {
 		const { error } = await this.supabase.from('leads').insert(data);
 		if (error) throw error;
 	}

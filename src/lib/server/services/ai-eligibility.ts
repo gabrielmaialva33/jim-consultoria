@@ -406,13 +406,12 @@ function calculateFallbackEligibility(lead: Lead): AIEligibilityAnalysis {
 
 			// Check state (cast to string[] for comparison)
 			const allowedStates = reqs.allowedStates as readonly string[] | null;
-			if (allowedStates === null || allowedStates.includes(lead.state_code)) {
-				met.push(`Estado ${lead.state_code} é elegível`);
+			const stateCode = lead.state_code ?? 'SP';
+			if (allowedStates === null || allowedStates.includes(stateCode)) {
+				met.push(`Estado ${stateCode} é elegível`);
 				score += 10;
 			} else {
-				notMet.push(
-					`Estado ${lead.state_code} não é elegível (apenas ${allowedStates?.join(', ')})`
-				);
+				notMet.push(`Estado ${stateCode} não é elegível (apenas ${allowedStates?.join(', ')})`);
 				score -= 30;
 			}
 
