@@ -1,7 +1,22 @@
 <script lang="ts">
 import '../app.css';
+import { onMount } from 'svelte';
+import { invalidate } from '$app/navigation';
 
-const { children } = $props();
+const { children, data } = $props();
+const { session, supabase } = data;
+
+onMount(() => {
+	const {
+		data: { subscription }
+	} = supabase.auth.onAuthStateChange((_event, _session) => {
+		if (_session?.expires_at !== session?.expires_at) {
+			invalidate('supabase:auth');
+		}
+	});
+
+	return () => subscription.unsubscribe();
+});
 </script>
 
 <svelte:head>

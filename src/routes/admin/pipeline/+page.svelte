@@ -1,9 +1,9 @@
 <script lang="ts">
 import { flip } from 'svelte/animate';
 import { dndzone } from 'svelte-dnd-action';
-import { enhance } from '$app/forms';
 import { invalidateAll } from '$app/navigation';
-import { leadStatusLabels, organizationTypeLabels } from '$lib/schemas/lead';
+import Avatar from '$lib/components/admin/ui/Avatar.svelte';
+import { grantInterestLabels, organizationTypeLabels } from '$lib/schemas/lead';
 import type { PageData } from './$types';
 
 const { data }: { data: PageData } = $props();
@@ -19,15 +19,31 @@ type Lead = {
 	status: LeadStatus;
 	created_at: string;
 	interested_grants: string[];
+	eligibility_score?: number;
 };
 
-const columns: { id: LeadStatus; label: string; color: string }[] = [
-	{ id: 'NEW', label: 'Novo', color: 'bg-gray-500' },
-	{ id: 'QUALIFICATION', label: 'Qualificação', color: 'bg-yellow-500' },
-	{ id: 'PROPOSAL', label: 'Proposta', color: 'bg-blue-500' },
-	{ id: 'NEGOTIATION', label: 'Negociação', color: 'bg-purple-500' },
-	{ id: 'WON', label: 'Fechado', color: 'bg-green-500' },
-	{ id: 'LOST', label: 'Perdido', color: 'bg-red-500' }
+const columns: { id: LeadStatus; label: string; colorClass: string; bgClass: string }[] = [
+	{ id: 'NEW', label: 'Novo', colorClass: 'bg-success', bgClass: 'kanban-column-new' },
+	{
+		id: 'QUALIFICATION',
+		label: 'Qualificacao',
+		colorClass: 'bg-warning',
+		bgClass: 'kanban-column-qualification'
+	},
+	{ id: 'PROPOSAL', label: 'Proposta', colorClass: 'bg-info', bgClass: 'kanban-column-proposal' },
+	{
+		id: 'NEGOTIATION',
+		label: 'Negociacao',
+		colorClass: 'bg-primary',
+		bgClass: 'kanban-column-negotiation'
+	},
+	{ id: 'WON', label: 'Fechado', colorClass: 'bg-success', bgClass: 'kanban-column-won' },
+	{
+		id: 'LOST',
+		label: 'Perdido',
+		colorClass: 'bg-destructive',
+		bgClass: 'kanban-column-lost'
+	}
 ];
 
 // Group leads by status
@@ -62,7 +78,6 @@ $effect(() => {
 });
 
 const flipDurationMs = 200;
-let pendingUpdate: { leadId: string; newStatus: string } | null = null;
 
 function handleDndConsider(status: LeadStatus, e: CustomEvent<{ items: Lead[] }>) {
 	leadsByStatus[status] = e.detail.items;
@@ -78,8 +93,6 @@ async function handleDndFinalize(
 	const movedLead = e.detail.items.find((l) => l.id === movedLeadId);
 
 	if (movedLead && movedLead.status !== status) {
-		pendingUpdate = { leadId: movedLeadId, newStatus: status };
-
 		// Update via form submission
 		const formData = new FormData();
 		formData.set('leadId', movedLeadId);
@@ -92,7 +105,6 @@ async function handleDndFinalize(
 
 		// Update local state
 		movedLead.status = status;
-		pendingUpdate = null;
 
 		// Refresh data
 		invalidateAll();
@@ -105,113 +117,183 @@ function formatDate(dateStr: string) {
 		month: 'short'
 	});
 }
+
+const totalLeads = $derived(data.leads.length);
+const activeLeads = $derived(data.leads.filter((l) => !['WON', 'LOST'].includes(l.status)).length);
 </script>
 
 <svelte:head>
-  <title>Pipeline | JIM Consultoria</title>
+	<title>Pipeline | JIM Consultoria</title>
 </svelte:head>
 
 <div class="space-y-6">
-  <!-- Header -->
-  <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-900">Pipeline</h1>
-      <p class="text-gray-600">Arraste os cards para atualizar o status</p>
-    </div>
-    <div class="flex gap-2">
-      <a href="/admin/leads" class="btn-outline px-4 py-2 text-sm">
-        Ver lista
-      </a>
-    </div>
-  </div>
+	<!-- Header -->
+	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+		<div>
+			<h1 class="text-2xl font-bold text-foreground">Pipeline</h1>
+			<p class="text-muted-foreground">
+				{activeLeads} leads ativos de {totalLeads} total
+			</p>
+		</div>
+		<div class="flex items-center gap-3">
+			<a href="/admin/leads" class="btn btn-outline btn-md">
+				<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 6h16M4 10h16M4 14h16M4 18h16"
+					/>
+				</svg>
+				Ver Lista
+			</a>
+		</div>
+	</div>
 
-  <!-- Kanban board -->
-  <div class="flex gap-4 overflow-x-auto pb-4">
-    {#each columns as column}
-      <div class="flex-shrink-0 w-72">
-        <!-- Column header -->
-        <div class="flex items-center gap-2 mb-3">
-          <div class="h-3 w-3 rounded-full {column.color}"></div>
-          <h3 class="font-medium text-gray-900">{column.label}</h3>
-          <span class="ml-auto text-sm text-gray-500">
-            {leadsByStatus[column.id].length}
-          </span>
-        </div>
+	<!-- Instructions -->
+	<div
+		class="flex items-center gap-3 rounded-lg border border-info/20 bg-info-light p-4 text-sm text-info"
+	>
+		<svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+			<path
+				stroke-linecap="round"
+				stroke-linejoin="round"
+				stroke-width="2"
+				d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+			/>
+		</svg>
+		<span>Arraste os cards entre as colunas para atualizar o status dos leads.</span>
+	</div>
 
-        <!-- Column content -->
-        <div
-          class="rounded-lg bg-gray-100 p-2 min-h-[500px]"
-          use:dndzone={{
-            items: leadsByStatus[column.id],
-            flipDurationMs,
-            dropTargetStyle: { outline: '2px dashed #6366f1', outlineOffset: '-2px' }
-          }}
-          onconsider={(e) => handleDndConsider(column.id, e)}
-          onfinalize={(e) => handleDndFinalize(column.id, e)}
-        >
-          {#each leadsByStatus[column.id] as lead (lead.id)}
-            <div
-              class="card mb-2 cursor-grab active:cursor-grabbing hover:shadow-md transition-shadow"
-              animate:flip={{ duration: flipDurationMs }}
-            >
-              <div class="flex items-start justify-between">
-                <div class="flex-1 min-w-0">
-                  <p class="font-medium text-gray-900 truncate">{lead.name}</p>
-                  <p class="text-sm text-gray-500 truncate">{lead.email}</p>
-                </div>
-              </div>
+	<!-- Kanban board -->
+	<div class="kanban-board">
+		{#each columns as column}
+			<div class="kanban-column">
+				<!-- Column header -->
+				<div class="kanban-column-header {column.bgClass}">
+					<div class="flex items-center gap-2">
+						<div class="h-2.5 w-2.5 rounded-full {column.colorClass}"></div>
+						<h3 class="font-semibold text-foreground">{column.label}</h3>
+					</div>
+					<span class="kanban-column-count">
+						{leadsByStatus[column.id].length}
+					</span>
+				</div>
 
-              <div class="mt-2">
-                <span class="badge bg-gray-100 text-gray-700 text-xs">
-                  {organizationTypeLabels[lead.organization_type] || lead.organization_type}
-                </span>
-              </div>
+				<!-- Column content -->
+				<div
+					class="kanban-column-content"
+					use:dndzone={{
+						items: leadsByStatus[column.id],
+						flipDurationMs,
+						dropTargetStyle: {
+							outline: '2px dashed var(--primary)',
+							outlineOffset: '-2px',
+							background: 'var(--primary-light)'
+						}
+					}}
+					onconsider={(e) => handleDndConsider(column.id, e)}
+					onfinalize={(e) => handleDndFinalize(column.id, e)}
+				>
+					{#each leadsByStatus[column.id] as lead (lead.id)}
+						<div class="kanban-card" animate:flip={{ duration: flipDurationMs }}>
+							<!-- Card header with avatar -->
+							<div class="flex items-start gap-3">
+								<Avatar name={lead.name} size="sm" />
+								<div class="flex-1 min-w-0">
+									<p class="font-medium text-foreground truncate">{lead.name}</p>
+									<p class="text-sm text-muted-foreground truncate">{lead.email}</p>
+								</div>
+							</div>
 
-              {#if lead.interested_grants && lead.interested_grants.length > 0}
-                <div class="mt-2 flex flex-wrap gap-1">
-                  {#each lead.interested_grants as grant}
-                    <span class="text-xs text-brand-600 font-medium">
-                      {grant === 'proac_icms' ? 'ProAC' : grant === 'rouanet' ? 'Rouanet' : 'PNAB'}
-                    </span>
-                  {/each}
-                </div>
-              {/if}
+							<!-- Organization type -->
+							<div class="mt-3">
+								<span class="badge badge-default badge-sm">
+									{organizationTypeLabels[lead.organization_type] || lead.organization_type}
+								</span>
+							</div>
 
-              <div class="mt-3 flex items-center justify-between text-xs text-gray-500">
-                <span>{formatDate(lead.created_at)}</span>
-                <a
-                  href="/admin/leads/{lead.id}"
-                  class="text-brand-600 hover:text-brand-700"
-                >
-                  Ver
-                </a>
-              </div>
-            </div>
-          {:else}
-            <div class="p-4 text-center text-sm text-gray-500">
-              Nenhum lead
-            </div>
-          {/each}
-        </div>
-      </div>
-    {/each}
-  </div>
+							<!-- Interested grants -->
+							{#if lead.interested_grants && lead.interested_grants.length > 0}
+								<div class="mt-2 flex flex-wrap gap-1">
+									{#each lead.interested_grants.slice(0, 2) as grant}
+										<span class="text-xs font-medium text-primary">
+											{grantInterestLabels[grant] || grant}
+										</span>
+									{/each}
+									{#if lead.interested_grants.length > 2}
+										<span class="text-xs text-muted-foreground">
+											+{lead.interested_grants.length - 2}
+										</span>
+									{/if}
+								</div>
+							{/if}
+
+							<!-- Card footer -->
+							<div
+								class="mt-3 pt-3 border-t border-border flex items-center justify-between text-xs"
+							>
+								<span class="text-muted-foreground">{formatDate(lead.created_at)}</span>
+								<a
+									href="/admin/leads/{lead.id}"
+									class="inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark transition-colors"
+								>
+									Detalhes
+									<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M9 5l7 7-7 7"
+										/>
+									</svg>
+								</a>
+							</div>
+						</div>
+					{:else}
+						<div class="kanban-empty">
+							<svg
+								class="h-8 w-8 text-muted-foreground/50 mx-auto mb-2"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke="currentColor"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="1.5"
+									d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+								/>
+							</svg>
+							<p class="text-sm text-muted-foreground">Nenhum lead</p>
+							<p class="text-xs text-muted-foreground/70 mt-1">Arraste um card para ca</p>
+						</div>
+					{/each}
+				</div>
+			</div>
+		{/each}
+	</div>
 </div>
 
 <style>
-  /* Custom scrollbar for kanban */
-  .overflow-x-auto::-webkit-scrollbar {
-    height: 8px;
-  }
-  .overflow-x-auto::-webkit-scrollbar-track {
-    background: #f1f5f9;
-    border-radius: 4px;
-  }
-  .overflow-x-auto::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 4px;
-  }
-  .overflow-x-auto::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
-  }
+	/* Kanban scrollbar */
+	.kanban-board::-webkit-scrollbar {
+		height: 8px;
+	}
+	.kanban-board::-webkit-scrollbar-track {
+		background: var(--muted);
+		border-radius: 4px;
+	}
+	.kanban-board::-webkit-scrollbar-thumb {
+		background: var(--border);
+		border-radius: 4px;
+	}
+	.kanban-board::-webkit-scrollbar-thumb:hover {
+		background: var(--muted-foreground);
+	}
+
+	/* Column hover effect */
+	.kanban-column:hover .kanban-column-header {
+		background: var(--muted);
+	}
 </style>

@@ -1,8 +1,78 @@
 @import "tailwindcss";
 
-/* Custom theme configuration */
+/* ============================================
+   DESIGN SYSTEM - Metronic-inspired
+   ============================================ */
+
+:root {
+	/* Semantic Colors */
+	--background: #f9fafb;
+	--foreground: #1b1b29;
+
+	--card: #ffffff;
+	--card-foreground: #1b1b29;
+
+	--muted: #f1f1f4;
+	--muted-foreground: #78829d;
+
+	--accent: #f9f9fb;
+	--accent-foreground: #1b1b29;
+
+	/* Primary - Brand Indigo */
+	--primary: #4f46e5;
+	--primary-foreground: #ffffff;
+	--primary-light: #eef2ff;
+	--primary-dark: #4338ca;
+
+	/* Secondary */
+	--secondary: #f1f1f4;
+	--secondary-foreground: #3f4254;
+
+	/* Success - Green */
+	--success: #17c653;
+	--success-foreground: #ffffff;
+	--success-light: #dfffea;
+
+	/* Warning - Yellow */
+	--warning: #f6c000;
+	--warning-foreground: #1b1b29;
+	--warning-light: #fff8dd;
+
+	/* Destructive - Red */
+	--destructive: #f8285a;
+	--destructive-foreground: #ffffff;
+	--destructive-light: #ffeef3;
+
+	/* Info - Purple */
+	--info: #7239ea;
+	--info-foreground: #ffffff;
+	--info-light: #f8f5ff;
+
+	/* Form Elements */
+	--border: #e1e3ea;
+	--input: #f1f1f4;
+	--ring: #4f46e5;
+
+	/* Sidebar - Dark theme */
+	--sidebar-bg: #1c1c2e;
+	--sidebar-text: #9a9cae;
+	--sidebar-text-active: #ffffff;
+	--sidebar-border: #2d2d3f;
+	--sidebar-hover: #252538;
+
+	/* Radius */
+	--radius: 0.5rem;
+	--radius-sm: 0.375rem;
+	--radius-lg: 0.75rem;
+	--radius-xl: 1rem;
+}
+
+/* ============================================
+   TAILWIND THEME EXTENSIONS
+   ============================================ */
+
 @theme {
-	/* Brand Colors - Deep blue/indigo for professionalism */
+	/* Brand Colors */
 	--color-brand-50: #eef2ff;
 	--color-brand-100: #e0e7ff;
 	--color-brand-200: #c7d2fe;
@@ -15,70 +85,179 @@
 	--color-brand-900: #312e81;
 	--color-brand-950: #1e1b4b;
 
+	/* Semantic Colors for Tailwind */
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-primary-light: var(--primary-light);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-success: var(--success);
+	--color-success-light: var(--success-light);
+	--color-warning: var(--warning);
+	--color-warning-light: var(--warning-light);
+	--color-destructive: var(--destructive);
+	--color-destructive-light: var(--destructive-light);
+	--color-info: var(--info);
+	--color-info-light: var(--info-light);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+
+	/* Sidebar */
+	--color-sidebar-bg: var(--sidebar-bg);
+	--color-sidebar-text: var(--sidebar-text);
+	--color-sidebar-text-active: var(--sidebar-text-active);
+	--color-sidebar-border: var(--sidebar-border);
+	--color-sidebar-hover: var(--sidebar-hover);
+
 	/* Fonts */
 	--font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Base Styles */
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
 html {
 	font-family: var(--font-sans);
 	scroll-behavior: smooth;
 }
 
 body {
-	background-color: white;
-	color: #111827;
+	background-color: var(--background);
+	color: var(--foreground);
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom component classes - using regular CSS */
-.btn-primary {
+/* ============================================
+   BUTTON COMPONENT CLASSES
+   ============================================ */
+
+.btn {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	border-radius: 0.5rem;
-	padding: 0.5rem 1rem;
+	gap: 0.5rem;
+	border-radius: var(--radius);
 	font-weight: 500;
-	background-color: var(--color-brand-600);
-	color: white;
+	font-size: 0.875rem;
 	transition: all 0.15s ease-in-out;
+	cursor: pointer;
+	white-space: nowrap;
 }
 
-.btn-primary:hover {
-	background-color: var(--color-brand-700);
+.btn:disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+
+/* Sizes */
+.btn-sm {
+	padding: 0.375rem 0.75rem;
+	font-size: 0.8125rem;
+}
+
+.btn-md {
+	padding: 0.5rem 1rem;
+}
+
+.btn-lg {
+	padding: 0.625rem 1.25rem;
+	font-size: 1rem;
+}
+
+/* Variants */
+.btn-primary {
+	background-color: var(--primary);
+	color: var(--primary-foreground);
+}
+
+.btn-primary:hover:not(:disabled) {
+	background-color: var(--primary-dark);
 }
 
 .btn-primary:focus {
 	outline: none;
 	box-shadow:
 		0 0 0 2px white,
-		0 0 0 4px var(--color-brand-500);
+		0 0 0 4px var(--primary);
+}
+
+.btn-secondary {
+	background-color: var(--secondary);
+	color: var(--secondary-foreground);
+}
+
+.btn-secondary:hover:not(:disabled) {
+	background-color: #e4e4e7;
 }
 
 .btn-outline {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 0.5rem;
-	padding: 0.5rem 1rem;
-	font-weight: 500;
-	border: 1px solid #d1d5db;
 	background-color: transparent;
-	transition: all 0.15s ease-in-out;
+	border: 1px solid var(--border);
+	color: var(--foreground);
 }
 
-.btn-outline:hover {
-	background-color: #f9fafb;
+.btn-outline:hover:not(:disabled) {
+	background-color: var(--muted);
 }
 
-.card {
-	border-radius: 0.75rem;
-	background-color: white;
-	padding: 1.5rem;
-	box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
-	border: 1px solid #f3f4f6;
+.btn-ghost {
+	background-color: transparent;
+	color: var(--foreground);
 }
+
+.btn-ghost:hover:not(:disabled) {
+	background-color: var(--muted);
+}
+
+.btn-destructive {
+	background-color: var(--destructive);
+	color: var(--destructive-foreground);
+}
+
+.btn-destructive:hover:not(:disabled) {
+	background-color: #e01f4f;
+}
+
+.btn-success {
+	background-color: var(--success);
+	color: var(--success-foreground);
+}
+
+.btn-success:hover:not(:disabled) {
+	background-color: #14b34a;
+}
+
+/* Icon button */
+.btn-icon {
+	padding: 0.5rem;
+	width: 2.25rem;
+	height: 2.25rem;
+}
+
+.btn-icon.btn-sm {
+	width: 1.75rem;
+	height: 1.75rem;
+	padding: 0.25rem;
+}
+
+.btn-icon.btn-lg {
+	width: 2.75rem;
+	height: 2.75rem;
+	padding: 0.625rem;
+}
+
+/* ============================================
+   BADGE COMPONENT CLASSES
+   ============================================ */
 
 .badge {
 	display: inline-flex;
@@ -87,32 +266,581 @@ body {
 	padding: 0.25rem 0.625rem;
 	font-size: 0.75rem;
 	font-weight: 500;
+	line-height: 1;
 }
+
+.badge-sm {
+	padding: 0.125rem 0.5rem;
+	font-size: 0.6875rem;
+}
+
+.badge-lg {
+	padding: 0.375rem 0.75rem;
+	font-size: 0.8125rem;
+}
+
+/* Badge Variants */
+.badge-default {
+	background-color: var(--muted);
+	color: var(--muted-foreground);
+}
+
+.badge-primary {
+	background-color: var(--primary-light);
+	color: var(--primary);
+}
+
+.badge-success {
+	background-color: var(--success-light);
+	color: var(--success);
+}
+
+.badge-warning {
+	background-color: var(--warning-light);
+	color: #b38600;
+}
+
+.badge-destructive {
+	background-color: var(--destructive-light);
+	color: var(--destructive);
+}
+
+.badge-info {
+	background-color: var(--info-light);
+	color: var(--info);
+}
+
+.badge-outline {
+	background-color: transparent;
+	border: 1px solid var(--border);
+	color: var(--muted-foreground);
+}
+
+/* Status badges for lead pipeline */
+.badge-new {
+	background-color: var(--success-light);
+	color: var(--success);
+}
+
+.badge-qualification {
+	background-color: var(--warning-light);
+	color: #b38600;
+}
+
+.badge-proposal {
+	background-color: var(--info-light);
+	color: var(--info);
+}
+
+.badge-negotiation {
+	background-color: var(--primary-light);
+	color: var(--primary);
+}
+
+.badge-won {
+	background-color: var(--success-light);
+	color: var(--success);
+}
+
+.badge-lost {
+	background-color: var(--destructive-light);
+	color: var(--destructive);
+}
+
+/* ============================================
+   CARD COMPONENT CLASSES
+   ============================================ */
+
+.card {
+	border-radius: var(--radius-lg);
+	background-color: var(--card);
+	padding: 1.5rem;
+	box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	border: 1px solid var(--border);
+}
+
+.card-sm {
+	padding: 1rem;
+}
+
+.card-lg {
+	padding: 2rem;
+}
+
+.card-header {
+	margin-bottom: 1rem;
+	padding-bottom: 1rem;
+	border-bottom: 1px solid var(--border);
+}
+
+.card-title {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--foreground);
+}
+
+.card-description {
+	font-size: 0.875rem;
+	color: var(--muted-foreground);
+	margin-top: 0.25rem;
+}
+
+.card-footer {
+	margin-top: 1rem;
+	padding-top: 1rem;
+	border-top: 1px solid var(--border);
+}
+
+/* ============================================
+   FORM INPUT CLASSES
+   ============================================ */
 
 .input {
 	display: block;
 	width: 100%;
-	border-radius: 0.5rem;
-	border: 1px solid #d1d5db;
-	padding: 0.5rem 1rem;
-	color: #111827;
+	border-radius: var(--radius);
+	border: 1px solid var(--border);
+	padding: 0.5rem 0.875rem;
+	font-size: 0.875rem;
+	color: var(--foreground);
+	background-color: white;
 	transition: all 0.15s ease-in-out;
 }
 
 .input:focus {
 	outline: none;
-	border-color: var(--color-brand-500);
-	box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+	border-color: var(--primary);
+	box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .input::placeholder {
-	color: #9ca3af;
+	color: var(--muted-foreground);
 }
 
+.input:disabled {
+	background-color: var(--muted);
+	cursor: not-allowed;
+	opacity: 0.7;
+}
+
+.input-error {
+	border-color: var(--destructive);
+}
+
+.input-error:focus {
+	box-shadow: 0 0 0 3px var(--destructive-light);
+}
+
+.input-sm {
+	padding: 0.375rem 0.75rem;
+	font-size: 0.8125rem;
+}
+
+.input-lg {
+	padding: 0.625rem 1rem;
+	font-size: 1rem;
+}
+
+/* Select */
+.select {
+	appearance: none;
+	background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2378829d' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+	background-position: right 0.5rem center;
+	background-repeat: no-repeat;
+	background-size: 1.5em 1.5em;
+	padding-right: 2.5rem;
+}
+
+/* Label */
 .label {
 	display: block;
 	font-size: 0.875rem;
 	font-weight: 500;
-	color: #374151;
+	color: var(--foreground);
+	margin-bottom: 0.375rem;
+}
+
+/* Error message */
+.error-message {
+	font-size: 0.75rem;
+	color: var(--destructive);
+	margin-top: 0.25rem;
+}
+
+/* ============================================
+   TABLE CLASSES
+   ============================================ */
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+.table th {
+	text-align: left;
+	padding: 0.75rem 1rem;
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--muted-foreground);
+	background-color: var(--muted);
+	border-bottom: 1px solid var(--border);
+}
+
+.table td {
+	padding: 0.875rem 1rem;
+	font-size: 0.875rem;
+	color: var(--foreground);
+	border-bottom: 1px solid var(--border);
+}
+
+.table tbody tr:hover {
+	background-color: var(--muted);
+}
+
+.table tbody tr:last-child td {
+	border-bottom: none;
+}
+
+/* ============================================
+   AVATAR CLASSES
+   ============================================ */
+
+.avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 9999px;
+	font-weight: 500;
+	color: white;
+	flex-shrink: 0;
+}
+
+.avatar-sm {
+	width: 2rem;
+	height: 2rem;
+	font-size: 0.75rem;
+}
+
+.avatar-md {
+	width: 2.5rem;
+	height: 2.5rem;
+	font-size: 0.875rem;
+}
+
+.avatar-lg {
+	width: 3rem;
+	height: 3rem;
+	font-size: 1rem;
+}
+
+.avatar-xl {
+	width: 4rem;
+	height: 4rem;
+	font-size: 1.25rem;
+}
+
+/* ============================================
+   SIDEBAR CLASSES
+   ============================================ */
+
+.sidebar {
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	width: 260px;
+	background-color: var(--sidebar-bg);
+	border-right: 1px solid var(--sidebar-border);
+	z-index: 40;
+	display: flex;
+	flex-direction: column;
+}
+
+.sidebar-logo {
+	padding: 1.25rem 1.5rem;
+	border-bottom: 1px solid var(--sidebar-border);
+}
+
+.sidebar-nav {
+	flex: 1;
+	padding: 1rem 0.75rem;
+	overflow-y: auto;
+}
+
+.sidebar-item {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	padding: 0.625rem 0.875rem;
+	border-radius: var(--radius);
+	color: var(--sidebar-text);
+	font-size: 0.875rem;
+	font-weight: 500;
+	transition: all 0.15s;
+	text-decoration: none;
+}
+
+.sidebar-item:hover {
+	background-color: var(--sidebar-hover);
+	color: var(--sidebar-text-active);
+}
+
+.sidebar-item.active {
+	background-color: var(--primary);
+	color: var(--sidebar-text-active);
+}
+
+.sidebar-item-icon {
+	width: 1.25rem;
+	height: 1.25rem;
+	flex-shrink: 0;
+}
+
+.sidebar-section {
+	margin-top: 1.5rem;
+	padding: 0 0.875rem;
+}
+
+.sidebar-section-title {
+	font-size: 0.6875rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.1em;
+	color: var(--sidebar-text);
+	opacity: 0.6;
+	margin-bottom: 0.5rem;
+}
+
+/* ============================================
+   HEADER CLASSES
+   ============================================ */
+
+.admin-header {
+	position: sticky;
+	top: 0;
+	z-index: 30;
+	background-color: white;
+	border-bottom: 1px solid var(--border);
+	height: 4rem;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 1.5rem;
+}
+
+.breadcrumb {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	font-size: 0.875rem;
+}
+
+.breadcrumb-item {
+	color: var(--muted-foreground);
+}
+
+.breadcrumb-item:last-child {
+	color: var(--foreground);
+	font-weight: 500;
+}
+
+.breadcrumb-separator {
+	color: var(--muted-foreground);
+}
+
+/* ============================================
+   STAT CARD CLASSES
+   ============================================ */
+
+.stat-card {
+	border-radius: var(--radius-lg);
+	background-color: var(--card);
+	padding: 1.25rem;
+	border: 1px solid var(--border);
+}
+
+.stat-card-icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 3rem;
+	height: 3rem;
+	border-radius: var(--radius);
+	flex-shrink: 0;
+}
+
+.stat-card-value {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: var(--foreground);
+}
+
+.stat-card-label {
+	font-size: 0.875rem;
+	font-weight: 500;
+	color: var(--foreground);
+}
+
+.stat-card-change {
+	font-size: 0.75rem;
+	color: var(--muted-foreground);
+}
+
+/* ============================================
+   EMPTY STATE CLASSES
+   ============================================ */
+
+.empty-state {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 3rem 1.5rem;
+	text-align: center;
+}
+
+.empty-state-icon {
+	width: 3rem;
+	height: 3rem;
+	color: var(--muted-foreground);
+	margin-bottom: 1rem;
+}
+
+.empty-state-title {
+	font-size: 1rem;
+	font-weight: 600;
+	color: var(--foreground);
 	margin-bottom: 0.25rem;
+}
+
+.empty-state-description {
+	font-size: 0.875rem;
+	color: var(--muted-foreground);
+	max-width: 20rem;
+}
+
+/* ============================================
+   DROPDOWN MENU CLASSES
+   ============================================ */
+
+.dropdown-menu {
+	position: absolute;
+	z-index: 50;
+	min-width: 12rem;
+	background-color: white;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow:
+		0 10px 15px -3px rgb(0 0 0 / 0.1),
+		0 4px 6px -4px rgb(0 0 0 / 0.1);
+	padding: 0.25rem;
+}
+
+.dropdown-item {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.5rem 0.75rem;
+	border-radius: var(--radius-sm);
+	font-size: 0.875rem;
+	color: var(--foreground);
+	cursor: pointer;
+	transition: background-color 0.15s;
+}
+
+.dropdown-item:hover {
+	background-color: var(--muted);
+}
+
+.dropdown-separator {
+	height: 1px;
+	background-color: var(--border);
+	margin: 0.25rem 0;
+}
+
+/* ============================================
+   KANBAN CLASSES
+   ============================================ */
+
+.kanban-column {
+	flex: 1;
+	min-width: 280px;
+	max-width: 320px;
+	background-color: var(--muted);
+	border-radius: var(--radius-lg);
+	display: flex;
+	flex-direction: column;
+	max-height: calc(100vh - 12rem);
+}
+
+.kanban-column-header {
+	padding: 1rem;
+	font-weight: 600;
+	font-size: 0.875rem;
+	color: var(--foreground);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.kanban-column-count {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.5rem;
+	height: 1.5rem;
+	padding: 0 0.375rem;
+	border-radius: 9999px;
+	background-color: var(--primary-light);
+	color: var(--primary);
+	font-size: 0.75rem;
+	font-weight: 600;
+}
+
+.kanban-column-content {
+	flex: 1;
+	padding: 0 0.75rem 0.75rem;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+}
+
+.kanban-card {
+	background-color: white;
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	padding: 1rem;
+	cursor: grab;
+	transition: all 0.15s;
+}
+
+.kanban-card:hover {
+	box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.kanban-card:active {
+	cursor: grabbing;
+}
+
+/* ============================================
+   UTILITY CLASSES
+   ============================================ */
+
+.text-muted {
+	color: var(--muted-foreground);
+}
+
+.bg-muted {
+	background-color: var(--muted);
+}
+
+.border-border {
+	border-color: var(--border);
+}
+
+.ring-ring {
+	--tw-ring-color: var(--ring);
 }
