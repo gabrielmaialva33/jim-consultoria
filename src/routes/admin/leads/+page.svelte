@@ -57,18 +57,23 @@ const totalPages = $derived(Math.ceil(data.total / data.perPage));
 	<!-- Header -->
 	<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
 		<div>
-			<h1 class="text-2xl font-bold text-foreground">Leads</h1>
-			<p class="text-muted-foreground">
-				{data.total} lead{data.total !== 1 ? 's' : ''} encontrado{data.total !== 1 ? 's' : ''}
+			<h1 class="text-3xl font-bold tracking-tight text-foreground">Leads</h1>
+			<p class="text-muted-foreground mt-1">
+				Gerencie seus potenciais clientes e oportunidades.
 			</p>
+		</div>
+		<div class="flex items-center gap-2">
+			<span class="badge badge-default">
+				{data.total} lead{data.total !== 1 ? 's' : ''} total
+			</span>
 		</div>
 	</div>
 
 	<!-- Filters -->
-	<div class="card">
-		<div class="flex flex-col gap-4 sm:flex-row sm:items-end">
-			<div class="flex-1">
-				<label for="search" class="label">Buscar</label>
+	<div class="card p-4">
+		<div class="grid gap-4 sm:grid-cols-[1fr_200px_auto]">
+			<div class="space-y-1">
+				<label for="search" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Buscar</label>
 				<div class="relative">
 					<svg
 						class="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -86,85 +91,93 @@ const totalPages = $derived(Math.ceil(data.total / data.perPage));
 					<input
 						type="text"
 						id="search"
-						class="input pl-10"
-						placeholder="Nome ou e-mail..."
+						class="input pl-9 h-10"
+						placeholder="Nome, e-mail do lead..."
 						bind:value={searchValue}
 						onkeydown={(e) => e.key === 'Enter' && applyFilters()}
 					/>
 				</div>
 			</div>
-			<div class="w-full sm:w-48">
-				<label for="status" class="label">Status</label>
-				<select id="status" class="input select" bind:value={selectedStatus}>
-					<option value="">Todos</option>
+			
+			<div class="space-y-1">
+				<label for="status" class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">Status</label>
+				<select id="status" class="input select h-10" bind:value={selectedStatus}>
+					<option value="">Todos os status</option>
 					{#each Object.entries(leadStatusLabels) as [value, label]}
 						<option {value}>{label}</option>
 					{/each}
 				</select>
 			</div>
-			<div class="flex gap-2">
-				<button type="button" class="btn btn-primary btn-md" onclick={applyFilters}> Filtrar </button>
-				<button type="button" class="btn btn-outline btn-md" onclick={clearFilters}>
-					Limpar
+			
+			<div class="flex items-end gap-2">
+				<button type="button" class="btn btn-primary h-10 px-6" onclick={applyFilters}>
+					Filtrar
+				</button>
+				<button type="button" class="btn btn-outline h-10 w-10 p-0" onclick={clearFilters} title="Limpar filtros">
+					<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
 				</button>
 			</div>
 		</div>
 	</div>
 
 	<!-- Table -->
-	<div class="card overflow-hidden p-0">
+	<div class="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
 		<div class="overflow-x-auto">
-			<table class="table">
-				<thead>
+			<table class="w-full text-sm">
+				<thead class="border-b border-border bg-muted/40">
 					<tr>
-						<th>Lead</th>
-						<th>Organizacao</th>
-						<th>Areas</th>
-						<th>Status</th>
-						<th>Data</th>
-						<th class="text-right">Acoes</th>
+						<th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Lead</th>
+						<th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground">Organizacao</th>
+						<th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[200px]">Areas</th>
+						<th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[150px]">Status</th>
+						<th class="h-12 px-4 text-left align-middle font-medium text-muted-foreground w-[120px]">Data</th>
+						<th class="h-12 px-4 text-right align-middle font-medium text-muted-foreground w-[100px]">Acoes</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="divide-y divide-border">
 					{#each data.leads as lead}
-						<tr>
-							<td>
+						<tr class="hover:bg-muted/50 transition-colors">
+							<td class="p-4 align-middle">
 								<div class="flex items-center gap-3">
-									<Avatar name={lead.name} size="sm" />
+									<Avatar name={lead.name} size="md" />
 									<div>
-										<p class="font-medium text-foreground">{lead.name}</p>
+										<p class="font-semibold text-foreground">{lead.name}</p>
 										<p class="text-sm text-muted-foreground">{lead.email}</p>
 									</div>
 								</div>
 							</td>
-							<td>
-								<p class="text-sm text-foreground">
-									{organizationTypeLabels[lead.organization_type] || lead.organization_type}
-								</p>
-								{#if lead.city && lead.state_code}
-									<p class="text-sm text-muted-foreground">{lead.city}, {lead.state_code}</p>
-								{/if}
+							<td class="p-4 align-middle">
+								<div class="flex flex-col">
+									<span class="font-medium text-foreground">
+										{organizationTypeLabels[lead.organization_type] || lead.organization_type}
+									</span>
+									{#if lead.city && lead.state_code}
+										<span class="text-xs text-muted-foreground">{lead.city}, {lead.state_code}</span>
+									{/if}
+								</div>
 							</td>
-							<td>
-								<div class="flex flex-wrap gap-1">
+							<td class="p-4 align-middle">
+								<div class="flex flex-wrap gap-1.5">
 									{#each (lead.cultural_areas || []).slice(0, 2) as area}
-										<span class="badge badge-primary badge-sm">
+										<span class="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground ring-1 ring-inset ring-border">
 											{culturalAreaLabels[area] || area}
 										</span>
 									{/each}
 									{#if (lead.cultural_areas || []).length > 2}
-										<span class="badge badge-default badge-sm">
-											+{(lead.cultural_areas || []).length - 2}
+										<span class="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground ring-1 ring-inset ring-border">
+											+{ (lead.cultural_areas || []).length - 2 }
 										</span>
 									{/if}
 								</div>
 							</td>
-							<td>
-								<form method="POST" action="?/updateStatus" use:enhance>
+							<td class="p-4 align-middle">
+								<form method="POST" action="?/updateStatus" use:enhance class="w-full">
 									<input type="hidden" name="leadId" value={lead.id} />
 									<select
 										name="status"
-										class="badge cursor-pointer border-0 {statusBadgeClasses[lead.status]}"
+										class="badge w-full cursor-pointer appearance-none border-0 text-center text-xs {statusBadgeClasses[lead.status]}"
 										value={lead.status}
 										onchange={(e) => e.currentTarget.form?.requestSubmit()}
 									>
@@ -174,41 +187,29 @@ const totalPages = $derived(Math.ceil(data.total / data.perPage));
 									</select>
 								</form>
 							</td>
-							<td class="text-sm text-muted-foreground">
+							<td class="p-4 align-middle whitespace-nowrap text-muted-foreground">
 								{formatDate(lead.created_at)}
 							</td>
-							<td class="text-right">
+							<td class="p-4 align-middle text-right">
 								<a
 									href="/admin/leads/{lead.id}"
-									class="btn btn-ghost btn-sm text-primary hover:text-primary-dark transition-all duration-200 hover:gap-2"
+									class="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border bg-transparent text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+									title="Ver detalhes"
 								>
-									Ver detalhes
 									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											d="M9 5l7 7-7 7"
-										/>
+										<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
 									</svg>
 								</a>
 							</td>
 						</tr>
 					{:else}
 						<tr>
-							<td colspan="6">
-								<div class="empty-state">
-									<svg class="empty-state-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="1.5"
-											d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
-										/>
+							<td colspan="6" class="p-8 text-center text-muted-foreground">
+								<div class="flex flex-col items-center justify-center gap-2">
+									<svg class="h-10 w-10 text-muted-foreground/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
 									</svg>
-									<p class="empty-state-title">Nenhum lead encontrado</p>
-									<p class="empty-state-description">
-										Ajuste os filtros ou aguarde novos cadastros.
-									</p>
+									<p>Nenhum lead encontrado com os filtros atuais.</p>
 								</div>
 							</td>
 						</tr>
