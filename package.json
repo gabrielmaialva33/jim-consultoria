@@ -33,6 +33,7 @@
 	"dependencies": {
 		"@supabase/ssr": "^0.8.0",
 		"@supabase/supabase-js": "^2.89.0",
+		"openai": "^6.15.0",
 		"svelte-dnd-action": "^0.9.68",
 		"sveltekit-superforms": "^2.29.1",
 		"zod": "^4.2.1"
