@@ -21,11 +21,7 @@ const grantTypeClasses: Record<string, string> = {
 
 function formatDate(dateStr: string | null) {
 	if (!dateStr) return '-';
-	return new Date(dateStr).toLocaleDateString('pt-BR', {
-		day: '2-digit',
-		month: 'short',
-		year: 'numeric'
-	});
+	return new Date(dateStr).toLocaleDateString('pt-BR');
 }
 
 function formatCurrency(value: number | null) {
@@ -121,15 +117,15 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{#each data.grants as grant}
 				{@const daysLeft = daysUntilClose(grant.closes_at)}
-				<div class="card hover:shadow-lg hover:border-primary/20 transition-all duration-200 {!grant.is_active ? 'opacity-60' : ''}">
+				<div class="card flex flex-col hover:shadow-lg hover:border-primary/20 transition-all duration-200 {!grant.is_active ? 'opacity-60' : ''}">
 					<!-- Card header -->
 					<div class="flex items-start justify-between gap-3">
 						<div class="flex-1 min-w-0">
 							<h3 class="font-semibold text-foreground truncate">{grant.name}</h3>
-							<p class="text-sm text-muted-foreground">{grant.agency}</p>
+							<p class="text-sm text-muted-foreground truncate">{grant.agency}</p>
 						</div>
 						<span
-							class="badge badge-sm font-semibold {grant.is_active
+							class="badge badge-sm font-semibold flex-shrink-0 {grant.is_active
 								? 'badge-success'
 								: 'bg-gray-200 text-gray-600'}"
 						>
@@ -137,60 +133,35 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 						</span>
 					</div>
 
-					<!-- Grant type badge -->
-					<div class="mt-3">
+					<!-- Badges row -->
+					<div class="mt-3 flex items-center justify-between gap-2">
 						<span class="badge badge-sm {grantTypeClasses[grant.grant_type]}">
 							{grantTypeLabels[grant.grant_type]}
 						</span>
+						{#if daysLeft !== null && daysLeft > 0}
+							<span class="badge badge-sm {daysLeft <= 7 ? 'badge-destructive' : daysLeft <= 30 ? 'badge-warning' : 'badge-info'}">
+								{daysLeft} dias
+							</span>
+						{/if}
 					</div>
 
 					<!-- Grant details -->
-					<div class="mt-4 space-y-3">
-						<div class="flex items-center justify-between text-sm">
-							<span class="text-muted-foreground">Abertura</span>
-							<span class="font-medium text-foreground">{formatDate(grant.opens_at)}</span>
-						</div>
-						<div class="flex items-center justify-between text-sm">
-							<span class="text-muted-foreground">Encerramento</span>
-							<span class="flex items-center gap-2">
-								<span class="font-medium text-foreground">{formatDate(grant.closes_at)}</span>
-								{#if daysLeft !== null}
-									<span
-										class="badge badge-sm {daysLeft <= 0
-											? 'badge-destructive'
-											: daysLeft <= 7
-												? 'badge-destructive'
-												: daysLeft <= 30
-													? 'badge-warning'
-													: 'badge-success'}"
-									>
-										{#if daysLeft <= 0}
-											Encerrado
-										{:else}
-											{daysLeft}d
-										{/if}
-									</span>
-								{/if}
-							</span>
-						</div>
-						{#if grant.max_per_project}
-							<div class="flex items-center justify-between text-sm">
-								<span class="text-muted-foreground">Max/Projeto</span>
-								<span class="font-medium text-primary">{formatCurrency(grant.max_per_project)}</span
-								>
-							</div>
-						{/if}
-						{#if grant.total_budget}
-							<div class="flex items-center justify-between text-sm">
-								<span class="text-muted-foreground">Orcamento Total</span>
-								<span class="font-medium text-foreground">{formatCurrency(grant.total_budget)}</span
-								>
-							</div>
-						{/if}
-					</div>
+					<dl class="mt-4 mb-4 grid grid-cols-2 gap-x-3 gap-y-1.5 text-sm">
+						<dt class="text-muted-foreground">Abertura</dt>
+						<dd class="text-right font-medium text-foreground">{formatDate(grant.opens_at)}</dd>
+
+						<dt class="text-muted-foreground">Encerramento</dt>
+						<dd class="text-right font-medium text-foreground">{formatDate(grant.closes_at)}</dd>
+
+						<dt class="text-muted-foreground">Max/Projeto</dt>
+						<dd class="text-right font-medium {grant.max_per_project ? 'text-primary' : 'text-muted-foreground'}">{formatCurrency(grant.max_per_project)}</dd>
+
+						<dt class="text-muted-foreground">Orçamento</dt>
+						<dd class="text-right font-medium {grant.total_budget ? 'text-foreground' : 'text-muted-foreground'}">{formatCurrency(grant.total_budget)}</dd>
+					</dl>
 
 					<!-- Card actions -->
-					<div class="mt-4 pt-4 border-t border-border flex items-center justify-between">
+					<div class="mt-auto pt-4 border-t border-border flex items-center justify-between">
 						<div class="flex items-center gap-3">
 							<button
 								type="button"
