@@ -152,7 +152,8 @@ const activeLeads = $derived(data.leads.filter((l) => !['WON', 'LOST'].includes(
 
 	<!-- Instructions -->
 	<div
-		class="flex items-center gap-3 rounded-lg border border-info/20 bg-info-light p-4 text-sm text-info"
+		class="flex items-center gap-3 rounded-lg border border-info/30 bg-info-light p-4 text-sm"
+		style="color: #936d0c;"
 	>
 		<svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 			<path
@@ -170,9 +171,9 @@ const activeLeads = $derived(data.leads.filter((l) => !['WON', 'LOST'].includes(
 		{#each columns as column}
 			<div class="kanban-column">
 				<!-- Column header -->
-				<div class="kanban-column-header {column.bgClass}">
+				<div class="kanban-column-header transition-colors duration-200">
 					<div class="flex items-center gap-2">
-						<div class="h-2.5 w-2.5 rounded-full {column.colorClass}"></div>
+						<div class="h-2.5 w-2.5 rounded-full {column.colorClass} animate-pulse"></div>
 						<h3 class="font-semibold text-foreground">{column.label}</h3>
 					</div>
 					<span class="kanban-column-count">
@@ -236,7 +237,7 @@ const activeLeads = $derived(data.leads.filter((l) => !['WON', 'LOST'].includes(
 								<span class="text-muted-foreground">{formatDate(lead.created_at)}</span>
 								<a
 									href="/admin/leads/{lead.id}"
-									class="inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark transition-colors"
+									class="inline-flex items-center gap-1 font-medium text-primary hover:text-primary-dark transition-all duration-200 hover:gap-2"
 								>
 									Detalhes
 									<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -287,13 +288,18 @@ const activeLeads = $derived(data.leads.filter((l) => !['WON', 'LOST'].includes(
 	.kanban-board::-webkit-scrollbar-thumb {
 		background: var(--border);
 		border-radius: 4px;
+		transition: background 0.2s ease-in-out;
 	}
 	.kanban-board::-webkit-scrollbar-thumb:hover {
 		background: var(--muted-foreground);
 	}
 
 	/* Column hover effect */
+	.kanban-column {
+		transition: transform 0.2s ease-in-out;
+	}
+
 	.kanban-column:hover .kanban-column-header {
-		background: var(--muted);
+		background: rgba(0, 0, 0, 0.02);
 	}
 </style>

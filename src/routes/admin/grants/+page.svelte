@@ -85,7 +85,8 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 	<!-- Success/Error messages -->
 	{#if form?.message}
 		<div
-			class="flex items-center gap-2 rounded-lg border border-success/20 bg-success-light p-4 text-success"
+			class="flex items-center gap-2 rounded-lg border border-success/30 bg-success-light p-4"
+			style="color: #496b3b;"
 		>
 			<svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path
@@ -100,7 +101,8 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 	{/if}
 	{#if form?.error}
 		<div
-			class="flex items-center gap-2 rounded-lg border border-destructive/20 bg-destructive-light p-4 text-destructive"
+			class="flex items-center gap-2 rounded-lg border border-destructive/30 bg-destructive-light p-4"
+			style="color: #6e2828;"
 		>
 			<svg class="h-5 w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 				<path
@@ -119,7 +121,7 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 		<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
 			{#each data.grants as grant}
 				{@const daysLeft = daysUntilClose(grant.closes_at)}
-				<div class="card hover:shadow-lg transition-shadow {!grant.is_active ? 'opacity-60' : ''}">
+				<div class="card hover:shadow-lg hover:border-primary/20 transition-all duration-200 {!grant.is_active ? 'opacity-60' : ''}">
 					<!-- Card header -->
 					<div class="flex items-start justify-between gap-3">
 						<div class="flex-1 min-w-0">
@@ -127,9 +129,9 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 							<p class="text-sm text-muted-foreground">{grant.agency}</p>
 						</div>
 						<span
-							class="badge badge-sm {grant.is_active
+							class="badge badge-sm font-semibold {grant.is_active
 								? 'badge-success'
-								: 'bg-muted text-muted-foreground'}"
+								: 'bg-gray-200 text-gray-600'}"
 						>
 							{grant.is_active ? 'Ativo' : 'Inativo'}
 						</span>
@@ -192,7 +194,7 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 						<div class="flex items-center gap-3">
 							<button
 								type="button"
-								class="text-sm font-medium text-primary hover:text-primary-dark transition-colors"
+								class="text-sm font-semibold text-primary hover:text-primary-dark transition-all duration-200 hover:underline"
 								onclick={() => openModal(grant)}
 							>
 								Editar
@@ -202,7 +204,7 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 									href={grant.official_url}
 									target="_blank"
 									rel="noopener noreferrer"
-									class="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
+									class="inline-flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary transition-all duration-200 hover:gap-1.5"
 								>
 									Link
 									<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -221,9 +223,9 @@ const activeGrants = $derived(data.grants.filter((g) => g.is_active).length);
 							<input type="hidden" name="is_active" value={grant.is_active.toString()} />
 							<button
 								type="submit"
-								class="text-sm font-medium {grant.is_active
+								class="text-sm font-semibold {grant.is_active
 									? 'text-destructive hover:text-destructive/80'
-									: 'text-success hover:text-success/80'} transition-colors"
+									: 'text-success hover:text-success/80'} transition-all duration-200 hover:underline"
 							>
 								{grant.is_active ? 'Desativar' : 'Ativar'}
 							</button>

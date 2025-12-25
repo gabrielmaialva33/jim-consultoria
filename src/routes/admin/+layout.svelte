@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Snippet } from 'svelte';
+import { browser } from '$app/environment';
 import Header from '$lib/components/admin/layout/Header.svelte';
 import Sidebar from '$lib/components/admin/layout/Sidebar.svelte';
 import type { LayoutData } from './$types';
@@ -15,6 +16,17 @@ function toggleMenu() {
 function closeMenu() {
 	menuOpen = false;
 }
+
+// Prevent body scroll when mobile menu is open
+$effect(() => {
+	if (browser) {
+		if (menuOpen) {
+			document.body.classList.add('mobile-menu-open');
+		} else {
+			document.body.classList.remove('mobile-menu-open');
+		}
+	}
+});
 </script>
 
 <div class="min-h-screen bg-background">
@@ -25,18 +37,18 @@ function closeMenu() {
 
 	<!-- Mobile Sidebar -->
 	<div
-		class="fixed inset-y-0 left-0 z-50 transform transition-transform duration-200 ease-in-out lg:hidden {menuOpen
+		class="fixed inset-y-0 left-0 z-50 w-[260px] transform transition-transform duration-300 ease-in-out lg:hidden {menuOpen
 			? 'translate-x-0'
 			: '-translate-x-full'}"
 	>
-		<Sidebar />
+		<Sidebar onNavigate={closeMenu} />
 	</div>
 
 	<!-- Mobile overlay -->
 	{#if menuOpen}
 		<button
 			type="button"
-			class="fixed inset-0 z-40 bg-black/50 lg:hidden"
+			class="fixed inset-0 z-40 bg-black/50 lg:hidden transition-opacity duration-300"
 			onclick={closeMenu}
 			aria-label="Close menu"
 		></button>

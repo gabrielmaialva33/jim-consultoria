@@ -41,11 +41,11 @@
       <div class="mt-10">
         <a
           href="/register"
-          class="inline-flex items-center rounded-xl bg-brand-600 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-brand-700 hover:shadow-xl transition-all"
+          class="inline-flex items-center gap-2 rounded-xl bg-brand-600 px-8 py-4 text-lg font-semibold text-white shadow-lg hover:bg-brand-700 hover:shadow-xl transition-all duration-300 hover:scale-105 hover:gap-3"
         >
           Fazer diagnóstico gratuito
-          <svg class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
           </svg>
         </a>
       </div>

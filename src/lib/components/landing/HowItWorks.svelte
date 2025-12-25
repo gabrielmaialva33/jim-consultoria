@@ -58,7 +58,7 @@ const steps = [
 
           <div class="relative flex flex-col items-center text-center">
             <!-- Icon circle -->
-            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg">
+            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-brand-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110">
               {@html step.icon}
             </div>
 

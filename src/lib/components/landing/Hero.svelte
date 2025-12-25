@@ -20,7 +20,7 @@
       <!-- Badge -->
       <div class="mb-6 inline-flex items-center rounded-full bg-white/10 px-4 py-2 backdrop-blur-sm">
         <span class="mr-2 h-2 w-2 rounded-full bg-green-400 animate-pulse"></span>
-        <span class="text-sm font-medium text-white">Editais 2025 abertos</span>
+        <span class="text-sm font-medium text-white">Editais 2026 abertos</span>
       </div>
 
       <!-- Main heading -->
@@ -39,13 +39,13 @@
       <div class="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
         <a
           href="/register"
-          class="btn-primary w-full bg-white text-brand-700 hover:bg-brand-50 sm:w-auto px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all"
+          class="btn-primary w-full bg-white text-brand-700 hover:bg-brand-50 sm:w-auto px-8 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
         >
           Quero ser aprovado
         </a>
         <a
           href="#como-funciona"
-          class="btn-outline w-full border-white/30 text-white hover:bg-white/10 sm:w-auto px-8 py-3 text-lg font-medium rounded-xl"
+          class="w-full border-2 border-white/40 text-white hover:bg-white/10 hover:border-white/60 sm:w-auto px-8 py-3 text-lg font-medium rounded-xl transition-all duration-300 inline-flex items-center justify-center"
         >
           Como funciona
         </a>

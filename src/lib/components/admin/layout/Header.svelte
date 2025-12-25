@@ -56,8 +56,9 @@ function closeUserMenu() {
 		{#if onMenuToggle}
 			<button
 				type="button"
-				class="lg:hidden -ml-2 p-2 rounded-lg hover:bg-muted transition-colors"
+				class="lg:hidden -ml-2 p-2 rounded-lg hover:bg-muted transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
 				onclick={onMenuToggle}
+				aria-label="Abrir menu"
 			>
 				<svg class="h-6 w-6 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 					<path
@@ -81,7 +82,7 @@ function closeUserMenu() {
 					</span>
 				{/if}
 				{#if crumb.href}
-					<a href={crumb.href} class="breadcrumb-item hover:text-foreground transition-colors">
+					<a href={crumb.href} class="breadcrumb-item hover:text-foreground transition-all duration-200 hover:underline">
 						{crumb.label}
 					</a>
 				{:else}
@@ -97,7 +98,7 @@ function closeUserMenu() {
 		<div class="relative">
 			<button
 				type="button"
-				class="flex items-center gap-2 rounded-lg p-2 hover:bg-muted transition-colors"
+				class="flex items-center gap-2 rounded-lg p-2 hover:bg-muted transition-all duration-200"
 				onclick={toggleUserMenu}
 			>
 				<div class="avatar avatar-sm bg-primary">

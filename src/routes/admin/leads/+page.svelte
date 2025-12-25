@@ -180,14 +180,13 @@ const totalPages = $derived(Math.ceil(data.total / data.perPage));
 							<td class="text-right">
 								<a
 									href="/admin/leads/{lead.id}"
-									class="btn btn-ghost btn-sm text-primary hover:text-primary-dark"
+									class="btn btn-ghost btn-sm text-primary hover:text-primary-dark transition-all duration-200 hover:gap-2"
 								>
 									Ver detalhes
-									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 										<path
 											stroke-linecap="round"
 											stroke-linejoin="round"
-											stroke-width="2"
 											d="M9 5l7 7-7 7"
 										/>
 									</svg>
@@ -221,7 +220,7 @@ const totalPages = $derived(Math.ceil(data.total / data.perPage));
 		<!-- Pagination -->
 		{#if totalPages > 1}
 			<div
-				class="flex items-center justify-between border-t border-border bg-muted/50 px-4 py-3"
+				class="flex items-center justify-between border-t border-border bg-muted/30 px-4 py-3"
 			>
 				<p class="text-sm text-muted-foreground">
 					Pagina {data.page} de {totalPages}

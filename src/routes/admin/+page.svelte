@@ -79,10 +79,10 @@ function getDaysColor(days: number): string {
 			<div class="grid gap-3 sm:grid-cols-2">
 				<a
 					href="/admin/leads"
-					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted transition-colors"
+					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted hover:shadow-md transition-all duration-200"
 				>
-					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-light">
-						<svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-light transition-transform duration-200 group-hover:scale-110">
+						<svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 							<path
 								stroke-linecap="round"
 								stroke-linejoin="round"
@@ -99,10 +99,10 @@ function getDaysColor(days: number): string {
 
 				<a
 					href="/admin/pipeline"
-					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted transition-colors"
+					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted hover:shadow-md transition-all duration-200"
 				>
-					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-info-light">
-						<svg class="h-5 w-5 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-info-light transition-transform duration-200 group-hover:scale-110">
+						<svg class="h-5 w-5 text-info" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 							<path
 								stroke-linecap="round"
 								stroke-linejoin="round"
@@ -119,10 +119,10 @@ function getDaysColor(days: number): string {
 
 				<a
 					href="/admin/grants"
-					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted transition-colors"
+					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted hover:shadow-md transition-all duration-200"
 				>
-					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-success-light">
-						<svg class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-success-light transition-transform duration-200 group-hover:scale-110">
+						<svg class="h-5 w-5 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
 							<path
 								stroke-linecap="round"
 								stroke-linejoin="round"
@@ -140,9 +140,9 @@ function getDaysColor(days: number): string {
 				<a
 					href="/"
 					target="_blank"
-					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted transition-colors"
+					class="flex items-center gap-3 rounded-lg border border-border p-4 hover:bg-muted hover:shadow-md transition-all duration-200"
 				>
-					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+					<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-muted transition-transform duration-200 group-hover:scale-110">
 						<svg
 							class="h-5 w-5 text-muted-foreground"
 							fill="none"
@@ -188,7 +188,7 @@ function getDaysColor(days: number): string {
 					{#each data.upcomingDeadlines as grant}
 						{@const days = daysUntil(grant.closes_at!)}
 						<li
-							class="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/50 transition-colors"
+							class="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/50 hover:shadow-sm transition-all duration-200"
 						>
 							<div>
 								<p class="font-medium text-foreground">{grant.name}</p>
