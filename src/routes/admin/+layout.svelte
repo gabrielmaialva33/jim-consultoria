@@ -8,6 +8,7 @@ import type { LayoutData } from './$types';
 const { data, children }: { data: LayoutData; children: Snippet } = $props();
 
 let menuOpen = $state(false);
+let sidebarCollapsed = $state(false);
 
 function toggleMenu() {
 	menuOpen = !menuOpen;
@@ -16,6 +17,23 @@ function toggleMenu() {
 function closeMenu() {
 	menuOpen = false;
 }
+
+function toggleSidebarCollapse() {
+	sidebarCollapsed = !sidebarCollapsed;
+	if (browser) {
+		localStorage.setItem('sidebar-collapsed', String(sidebarCollapsed));
+	}
+}
+
+// Load collapsed state from localStorage
+$effect(() => {
+	if (browser) {
+		const saved = localStorage.getItem('sidebar-collapsed');
+		if (saved !== null) {
+			sidebarCollapsed = saved === 'true';
+		}
+	}
+});
 
 // Prevent body scroll when mobile menu is open
 $effect(() => {
@@ -32,7 +50,7 @@ $effect(() => {
 <div class="min-h-screen bg-background">
 	<!-- Desktop Sidebar -->
 	<div class="hidden lg:block">
-		<Sidebar />
+		<Sidebar collapsed={sidebarCollapsed} onToggleCollapse={toggleSidebarCollapse} />
 	</div>
 
 	<!-- Mobile Sidebar -->
@@ -55,7 +73,7 @@ $effect(() => {
 	{/if}
 
 	<!-- Main content area -->
-	<div class="lg:pl-[260px]">
+	<div class="transition-all duration-300 {sidebarCollapsed ? 'lg:pl-[72px]' : 'lg:pl-[260px]'}">
 		<!-- Header -->
 		<Header user={data.session?.user} onMenuToggle={toggleMenu} />
 
