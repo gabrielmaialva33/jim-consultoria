@@ -1,12 +1,12 @@
 <script lang="ts">
-import { page } from '$app/stores'
-import { goto } from '$app/navigation'
-import Footer from '$lib/components/landing/Footer.svelte'
+import { goto } from '$app/navigation';
+import { page } from '$app/stores';
+import Footer from '$lib/components/landing/Footer.svelte';
 
-let { data } = $props()
+let { data } = $props();
 
-let searchInput = $state(data.search)
-let isLoading = $state(false)
+let searchInput = $state(data.search);
+let isLoading = $state(false);
 
 function formatCurrency(value: number): string {
 	return new Intl.NumberFormat('pt-BR', {
@@ -14,98 +14,98 @@ function formatCurrency(value: number): string {
 		currency: 'BRL',
 		minimumFractionDigits: 0,
 		maximumFractionDigits: 0
-	}).format(value)
+	}).format(value);
 }
 
 function formatDate(dateString: string): string {
-	if (!dateString) return 'N/A'
+	if (!dateString) return 'N/A';
 	return new Intl.DateTimeFormat('pt-BR', {
 		day: '2-digit',
 		month: '2-digit',
 		year: 'numeric'
-	}).format(new Date(dateString))
+	}).format(new Date(dateString));
 }
 
 function getPersonTypeLabel(type: string | undefined): string {
-	if (!type) return ''
+	if (!type) return '';
 	const types: Record<string, string> = {
 		LegalPerson: 'Pessoa Jurídica',
 		NaturalPerson: 'Pessoa Física',
 		MEI: 'MEI'
-	}
-	return types[type] || type
+	};
+	return types[type] || type;
 }
 
 function getStatusColor(status: string): string {
-	const lowerStatus = status.toLowerCase()
+	const lowerStatus = status.toLowerCase();
 	if (lowerStatus.includes('aprovad') || lowerStatus.includes('autorizada')) {
-		return 'bg-green-100 text-green-700'
+		return 'bg-green-100 text-green-700';
 	}
 	if (lowerStatus.includes('execu') || lowerStatus.includes('capta')) {
-		return 'bg-blue-100 text-blue-700'
+		return 'bg-blue-100 text-blue-700';
 	}
 	if (lowerStatus.includes('aguard') || lowerStatus.includes('análise')) {
-		return 'bg-yellow-100 text-yellow-700'
+		return 'bg-yellow-100 text-yellow-700';
 	}
-	return 'bg-gray-100 text-gray-700'
+	return 'bg-gray-100 text-gray-700';
 }
 
 function truncateStatus(status: string): string {
-	if (status.length <= 20) return status
-	return status.slice(0, 20) + '...'
+	if (status.length <= 20) return status;
+	return status.slice(0, 20) + '...';
 }
 
 async function handleSearch(event: Event) {
-	event.preventDefault()
-	isLoading = true
-	const params = new URLSearchParams($page.url.searchParams)
+	event.preventDefault();
+	isLoading = true;
+	const params = new URLSearchParams($page.url.searchParams);
 	if (searchInput.trim()) {
-		params.set('busca', searchInput.trim())
+		params.set('busca', searchInput.trim());
 	} else {
-		params.delete('busca')
+		params.delete('busca');
 	}
-	params.set('pagina', '1')
-	await goto(`?${params}`, { invalidateAll: true })
-	isLoading = false
+	params.set('pagina', '1');
+	await goto(`?${params}`, { invalidateAll: true });
+	isLoading = false;
 }
 
 async function handleProgramChange(programId: string) {
-	isLoading = true
-	const params = new URLSearchParams()
-	params.set('programa', programId)
-	params.set('pagina', '1')
+	isLoading = true;
+	const params = new URLSearchParams();
+	params.set('programa', programId);
+	params.set('pagina', '1');
 	if (searchInput.trim()) {
-		params.set('busca', searchInput.trim())
+		params.set('busca', searchInput.trim());
 	}
-	await goto(`?${params}`, { invalidateAll: true })
-	isLoading = false
+	await goto(`?${params}`, { invalidateAll: true });
+	isLoading = false;
 }
 
 async function handlePageChange(newPage: number) {
-	if (newPage < 1 || newPage > data.totalPages) return
-	isLoading = true
-	const params = new URLSearchParams($page.url.searchParams)
-	params.set('pagina', newPage.toString())
-	await goto(`?${params}`, { invalidateAll: true })
-	isLoading = false
+	if (newPage < 1 || newPage > data.totalPages) return;
+	isLoading = true;
+	const params = new URLSearchParams($page.url.searchParams);
+	params.set('pagina', newPage.toString());
+	await goto(`?${params}`, { invalidateAll: true });
+	isLoading = false;
 }
 
 function getPageNumbers(current: number, total: number): (number | 'ellipsis')[] {
 	if (total <= 7) {
-		return Array.from({ length: total }, (_, i) => i + 1)
+		return Array.from({ length: total }, (_, i) => i + 1);
 	}
 
-	const pages: (number | 'ellipsis')[] = []
+	const pages: (number | 'ellipsis')[] = [];
 
 	if (current <= 4) {
-		pages.push(1, 2, 3, 4, 5, 'ellipsis', total)
+		pages.push(1, 2, 3, 4, 5, 'ellipsis', total);
 	} else if (current >= total - 3) {
-		pages.push(1, 'ellipsis', total - 4, total - 3, total - 2, total - 1, total)
+		pages.push(1, 'ellipsis', total - 4, total - 3, total - 2, total - 1, total);
 	} else {
-		pages.push(1, 'ellipsis', current - 1, current, current + 1, 'ellipsis', total)
+		pages.push(1, 'ellipsis', current - 1, current, current + 1, 'ellipsis', total);
 	}
 
-	return pages
+	return pages;
 }
 </script>
 
@@ -414,30 +414,92 @@ function getPageNumbers(current: number, total: number): (number | 'ellipsis')[]
 				</nav>
 			{/if}
 		{:else}
-			<!-- Empty state -->
-			<div class="rounded-2xl bg-white py-16 text-center shadow-sm">
-				<svg
-					class="mx-auto h-16 w-16 text-gray-300"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke="currentColor"
-					stroke-width="1"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-					/>
-				</svg>
-				<h3 class="mt-4 text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
-				<p class="mt-2 text-gray-500">
-					{#if data.search}
-						Tente buscar com outras palavras-chave
-					{:else}
-						Não há projetos disponíveis para este programa no momento
-					{/if}
-				</p>
-			</div>
+			<!-- Empty state - Special PNAB info or generic -->
+			{#if data.pnabInfo}
+				<div class="space-y-6">
+					<!-- PNAB Info Card -->
+					<div class="rounded-2xl bg-white p-8 shadow-sm">
+						<div class="flex items-start gap-4">
+							<div class="rounded-xl bg-brand-100 p-3">
+								<svg class="h-8 w-8 text-brand-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+								</svg>
+							</div>
+							<div>
+								<h3 class="text-xl font-bold text-gray-900">{data.pnabInfo.title}</h3>
+								<p class="mt-2 text-gray-600">{data.pnabInfo.description}</p>
+							</div>
+						</div>
+
+						<!-- Stats -->
+						<div class="mt-8 grid gap-4 sm:grid-cols-3">
+							{#each data.pnabInfo.stats as stat}
+								<div class="rounded-xl bg-gray-50 p-4 text-center">
+									<p class="text-2xl font-bold text-brand-600">{stat.value}</p>
+									<p class="text-sm text-gray-600">{stat.label}</p>
+								</div>
+							{/each}
+						</div>
+
+						<!-- Links -->
+						<div class="mt-8">
+							<h4 class="text-sm font-semibold uppercase tracking-wider text-gray-500">Recursos oficiais</h4>
+							<div class="mt-4 grid gap-4 sm:grid-cols-3">
+								{#each data.pnabInfo.links as link}
+									<a
+										href={link.url}
+										target="_blank"
+										rel="noopener noreferrer"
+										class="group rounded-xl border border-gray-200 p-4 transition-all hover:border-brand-300 hover:shadow-md"
+									>
+										<div class="flex items-center justify-between">
+											<span class="font-medium text-gray-900 group-hover:text-brand-600">{link.name}</span>
+											<svg class="h-4 w-4 text-gray-400 group-hover:text-brand-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+												<path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+											</svg>
+										</div>
+										<p class="mt-1 text-sm text-gray-500">{link.description}</p>
+									</a>
+								{/each}
+							</div>
+						</div>
+
+						<!-- Note -->
+						<div class="mt-8 rounded-xl bg-amber-50 p-4">
+							<div class="flex gap-3">
+								<svg class="h-5 w-5 shrink-0 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+									<path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+								</svg>
+								<p class="text-sm text-amber-800">{data.pnabInfo.note}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			{:else}
+				<div class="rounded-2xl bg-white py-16 text-center shadow-sm">
+					<svg
+						class="mx-auto h-16 w-16 text-gray-300"
+						fill="none"
+						viewBox="0 0 24 24"
+						stroke="currentColor"
+						stroke-width="1"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+						/>
+					</svg>
+					<h3 class="mt-4 text-lg font-medium text-gray-900">Nenhum projeto encontrado</h3>
+					<p class="mt-2 text-gray-500">
+						{#if data.search}
+							Tente buscar com outras palavras-chave
+						{:else}
+							Não há projetos disponíveis para este programa no momento
+						{/if}
+					</p>
+				</div>
+			{/if}
 		{/if}
 
 		<!-- CTA -->
