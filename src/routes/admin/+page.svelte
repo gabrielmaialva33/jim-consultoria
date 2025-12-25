@@ -108,7 +108,7 @@ const statCards = [
           </div>
         </a>
         <a
-          href="/admin/editais"
+          href="/admin/grants"
           class="flex items-center gap-3 rounded-lg border border-gray-200 p-4 hover:bg-gray-50 transition-colors"
         >
           <div class="h-10 w-10 rounded-lg bg-green-100 flex items-center justify-center">
