@@ -17,8 +17,7 @@ let currentStep = $state(1);
 const totalSteps = 5;
 
 const { form, errors, enhance, submitting, message } = superForm(data.form, {
-	validators: zod4Client(leadFormSchema),
-	dataType: 'json'
+	validators: zod4Client(leadFormSchema)
 });
 
 // Step navigation
@@ -154,6 +153,66 @@ function maskPhone(event: Event) {
 
 	$form.phone = value;
 }
+
+// File upload state
+let selectedFile = $state<File | null>(null);
+let uploadError = $state<string | null>(null);
+let isUploading = $state(false);
+let uploadSuccess = $state(false);
+
+// Input mode for step 5
+let inputMode = $state<'write' | 'upload'>('write');
+
+// Handle file selection
+function handleFileSelect(event: Event) {
+	const input = event.target as HTMLInputElement;
+	const file = input.files?.[0];
+
+	if (!file) {
+		selectedFile = null;
+		return;
+	}
+
+	// Validate file type
+	const allowedTypes = [
+		'application/pdf',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+		'image/jpeg',
+		'image/png',
+		'image/webp'
+	];
+
+	if (!allowedTypes.includes(file.type)) {
+		uploadError = 'Tipo de arquivo nao suportado. Use PDF, DOCX, ou imagens (JPG, PNG, WebP).';
+		selectedFile = null;
+		return;
+	}
+
+	// Validate file size (max 10MB)
+	const maxSize = 10 * 1024 * 1024;
+	if (file.size > maxSize) {
+		uploadError = 'Arquivo muito grande. O tamanho maximo e 10MB.';
+		selectedFile = null;
+		return;
+	}
+
+	uploadError = null;
+	selectedFile = file;
+}
+
+// Format file size
+function formatFileSize(bytes: number): string {
+	if (bytes < 1024) return `${bytes} B`;
+	if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+	return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+// Remove selected file
+function removeFile() {
+	selectedFile = null;
+	uploadError = null;
+	uploadSuccess = false;
+}
 </script>
 
 <svelte:head>
@@ -185,7 +244,7 @@ function maskPhone(event: Event) {
     </div>
 
     <!-- Form -->
-    <form method="POST" use:enhance class="mt-6 sm:mt-8">
+    <form method="POST" use:enhance enctype="multipart/form-data" class="mt-6 sm:mt-8">
       <div class="rounded-xl bg-white p-4 sm:p-6 shadow-sm border border-gray-100">
         <!-- Success message -->
         {#if $message}
@@ -413,23 +472,111 @@ function maskPhone(event: Event) {
         <!-- Step 5: Project -->
         {#if currentStep === 5}
           <div class="space-y-4">
+            <!-- Input mode toggle -->
             <div>
-              <label for="project_description" class="label text-sm sm:text-base">Descreva seu projeto (opcional)</label>
-              <textarea
-                id="project_description"
-                name="project_description"
-                bind:value={$form.project_description}
-                rows="4"
-                class="input text-sm sm:text-base"
-                placeholder="Conte um pouco sobre seu projeto cultural..."
-              ></textarea>
-              {#if $errors.project_description}
-                <p class="mt-1 text-sm text-red-600">{$errors.project_description}</p>
-              {/if}
+              <label class="label text-sm sm:text-base mb-2">Como deseja informar seu projeto?</label>
+              <div class="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onclick={() => inputMode = 'write'}
+                  class="flex items-center justify-center gap-2 p-3 rounded-lg border transition-colors {inputMode === 'write' ? 'border-brand-500 bg-brand-50 ring-1 ring-brand-500' : 'border-gray-200 hover:border-gray-300'}"
+                >
+                  <svg class="h-5 w-5 {inputMode === 'write' ? 'text-brand-600' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                  </svg>
+                  <span class="text-sm font-medium">Escrever</span>
+                </button>
+                <button
+                  type="button"
+                  onclick={() => inputMode = 'upload'}
+                  class="flex items-center justify-center gap-2 p-3 rounded-lg border transition-colors {inputMode === 'upload' ? 'border-brand-500 bg-brand-50 ring-1 ring-brand-500' : 'border-gray-200 hover:border-gray-300'}"
+                >
+                  <svg class="h-5 w-5 {inputMode === 'upload' ? 'text-brand-600' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                  </svg>
+                  <span class="text-sm font-medium">Enviar arquivo</span>
+                </button>
+              </div>
             </div>
 
+            <!-- Write mode -->
+            {#if inputMode === 'write'}
+              <div>
+                <label for="project_description" class="label text-sm sm:text-base">Descreva seu projeto (opcional)</label>
+                <textarea
+                  id="project_description"
+                  name="project_description"
+                  bind:value={$form.project_description}
+                  rows="4"
+                  class="input text-sm sm:text-base"
+                  placeholder="Conte um pouco sobre seu projeto cultural..."
+                ></textarea>
+                {#if $errors.project_description}
+                  <p class="mt-1 text-sm text-red-600">{$errors.project_description}</p>
+                {/if}
+              </div>
+            {/if}
+
+            <!-- Upload mode -->
+            {#if inputMode === 'upload'}
+              <div>
+                <label class="label text-sm sm:text-base">Envie seu projeto (PDF ou DOCX)</label>
+                <p class="text-xs text-gray-500 mb-3">O documento sera analisado automaticamente pela nossa IA</p>
+
+                {#if !selectedFile}
+                  <label
+                    class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-colors {uploadError ? 'border-red-300 bg-red-50' : 'border-gray-300 hover:border-brand-400 hover:bg-gray-50'}"
+                  >
+                    <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                      <svg class="w-8 h-8 mb-2 {uploadError ? 'text-red-400' : 'text-gray-400'}" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                      </svg>
+                      <p class="text-sm text-gray-500">
+                        <span class="font-medium text-brand-600">Clique para enviar</span> ou arraste o arquivo
+                      </p>
+                      <p class="text-xs text-gray-400 mt-1">PDF, DOCX, JPG, PNG (max. 10MB)</p>
+                    </div>
+                    <input
+                      type="file"
+                      name="project_document"
+                      class="hidden"
+                      accept=".pdf,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,image/jpeg,image/png,image/webp"
+                      onchange={handleFileSelect}
+                    />
+                  </label>
+                {:else}
+                  <!-- File selected -->
+                  <div class="flex items-center gap-3 p-4 border border-green-200 bg-green-50 rounded-lg">
+                    <div class="flex-shrink-0">
+                      <svg class="h-8 w-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm font-medium text-gray-900 truncate">{selectedFile.name}</p>
+                      <p class="text-xs text-gray-500">{formatFileSize(selectedFile.size)}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onclick={removeFile}
+                      class="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 transition-colors"
+                      aria-label="Remover arquivo"
+                    >
+                      <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                {/if}
+
+                {#if uploadError}
+                  <p class="mt-2 text-sm text-red-600">{uploadError}</p>
+                {/if}
+              </div>
+            {/if}
+
             <div>
-              <label for="estimated_budget" class="label text-sm sm:text-base">Orçamento estimado do projeto (opcional)</label>
+              <label for="estimated_budget" class="label text-sm sm:text-base">Orcamento estimado do projeto (opcional)</label>
               <div class="flex items-center border border-gray-300 rounded-lg bg-white focus-within:ring-2 focus-within:ring-brand-500 focus-within:border-brand-500">
                 <span class="pl-3 sm:pl-4 pr-2 text-gray-500 select-none text-sm sm:text-base">R$</span>
                 <input
@@ -443,6 +590,21 @@ function maskPhone(event: Event) {
                 />
               </div>
             </div>
+
+            <!-- Info about document processing -->
+            {#if inputMode === 'upload' && selectedFile}
+              <div class="p-3 bg-blue-50 border border-blue-100 rounded-lg">
+                <div class="flex items-start gap-2">
+                  <svg class="h-5 w-5 text-blue-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div class="text-xs text-blue-700">
+                    <p class="font-medium">Processamento automatico</p>
+                    <p class="mt-0.5">Nosso sistema vai extrair automaticamente as informacoes do seu projeto usando inteligencia artificial.</p>
+                  </div>
+                </div>
+              </div>
+            {/if}
           </div>
         {/if}
 

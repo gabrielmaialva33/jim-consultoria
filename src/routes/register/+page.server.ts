@@ -2,7 +2,8 @@ import { fail, message, superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { leadFormSchema } from '$lib/schemas/lead';
 import { calculateEligibility, getEligibleGrantNames, getOverallScore } from '$lib/scoring';
-import type { Grant } from '$lib/supabase/types';
+import { parseAndAnalyzeDocument } from '$lib/server/services/document-parser';
+import type { Grant, Json } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -13,7 +14,9 @@ export const load: PageServerLoad = async () => {
 
 export const actions: Actions = {
 	default: async ({ request, locals }) => {
-		const form = await superValidate(request, zod4(leadFormSchema));
+		// Get form data (multipart for file upload support)
+		const formData = await request.formData();
+		const form = await superValidate(formData, zod4(leadFormSchema));
 
 		if (!form.valid) {
 			return fail(400, { form });
@@ -26,6 +29,35 @@ export const actions: Actions = {
 		const eligibilityResults = calculateEligibility(form.data as any, (grants ?? []) as Grant[]);
 		const eligibilityScore = getOverallScore(eligibilityResults);
 		const eligibleGrants = getEligibleGrantNames(eligibilityResults);
+
+		// Handle document upload if present
+		let documentContent: string | null = null;
+		let documentMetadata: Json | null = null;
+		let documentAnalysis: Json | null = null;
+
+		const projectDocument = formData.get('project_document');
+		if (projectDocument && projectDocument instanceof File && projectDocument.size > 0) {
+			try {
+				const result = await parseAndAnalyzeDocument(projectDocument);
+
+				if (result.parsed.success) {
+					documentContent = result.parsed.content;
+					documentMetadata = (result.parsed.metadata as Json) || null;
+					documentAnalysis = (result.analysis as unknown as Json) || null;
+
+					// Use analyzed summary as project description if not provided
+					if (!form.data.project_description && result.analysis?.summary) {
+						form.data.project_description = result.analysis.summary;
+					}
+				} else {
+					console.error('Document parsing failed:', result.parsed.error);
+					// Continue without document - don't fail the submission
+				}
+			} catch (error) {
+				console.error('Error processing document:', error);
+				// Continue without document - don't fail the submission
+			}
+		}
 
 		// Prepare data for insertion
 		const leadData = {
@@ -44,7 +76,10 @@ export const actions: Actions = {
 			status: 'NEW' as const,
 			source: 'landing',
 			eligibility_score: eligibilityScore,
-			eligible_grants: eligibleGrants
+			eligible_grants: eligibleGrants,
+			document_content: documentContent,
+			document_metadata: documentMetadata,
+			document_analysis: documentAnalysis
 		};
 
 		const { error } = await locals.supabase.from('leads').insert(leadData);
