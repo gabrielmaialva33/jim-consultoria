@@ -49,8 +49,8 @@ export const leadFormSchema = z.object({
 		.regex(/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/, 'CNPJ inválido. Use o formato 00.000.000/0000-00')
 		.optional()
 		.or(z.literal('')),
-	state_code: z.string().length(2, 'Estado inválido').default('SP'),
-	city: z.string().optional(),
+	state_code: z.string().length(2, 'Selecione um estado').optional().or(z.literal('')),
+	city: z.string().optional().or(z.literal('')),
 
 	// Step 3: Cultural Profile
 	cultural_areas: z.array(culturalAreaSchema).min(1, 'Selecione pelo menos uma área cultural'),
