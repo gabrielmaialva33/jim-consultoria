@@ -36,7 +36,10 @@ export const load: PageServerLoad = async ({ locals }) => {
 		.filter(
 			(g) => g.closes_at && new Date(g.closes_at) >= now && new Date(g.closes_at) <= thirtyDays
 		)
-		.sort((a, b) => new Date(a.closes_at!).getTime() - new Date(b.closes_at!).getTime());
+		.sort(
+			(a, b) =>
+				new Date(a.closes_at as string).getTime() - new Date(b.closes_at as string).getTime()
+		);
 
 	return {
 		stats: {

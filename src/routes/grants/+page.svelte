@@ -52,7 +52,7 @@ function getStatusColor(status: string): string {
 
 function truncateStatus(status: string): string {
 	if (status.length <= 20) return status;
-	return status.slice(0, 20) + '...';
+	return `${status.slice(0, 20)}...`;
 }
 
 async function handleSearch(event: Event) {

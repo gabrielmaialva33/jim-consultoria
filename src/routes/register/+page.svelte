@@ -17,7 +17,19 @@ let currentStep = $state(1);
 const totalSteps = 5;
 
 const { form, errors, enhance, submitting, message } = superForm(data.form, {
-	validators: zod4Client(leadFormSchema)
+	validators: zod4Client(leadFormSchema),
+	onResult: ({ result }) => {
+		console.log('Form state before submit:', JSON.stringify($form));
+		console.log('onResult type:', result.type);
+		if (result.type === 'failure' && result.data?.form) {
+			console.log('Validation errors:', JSON.stringify(result.data.form.errors));
+		}
+		// Handle redirect from server - use window.location for reliable redirect
+		if (result.type === 'redirect') {
+			console.log('Redirecting to:', result.location);
+			window.location.href = result.location;
+		}
+	}
 });
 
 // Step navigation
@@ -245,6 +257,9 @@ function removeFile() {
 
     <!-- Form -->
     <form method="POST" use:enhance enctype="multipart/form-data" class="mt-6 sm:mt-8">
+      <!-- Hidden inputs for array fields (required for FormData serialization) -->
+      <!-- REMOVED: Redundant hidden inputs loop since actual checkboxes are now kept in DOM -->
+
       <div class="rounded-xl bg-white p-4 sm:p-6 shadow-sm border border-gray-100">
         <!-- Success message -->
         {#if $message}
@@ -255,7 +270,7 @@ function removeFile() {
         {/if}
 
         <!-- Step 1: Basic Info -->
-        {#if currentStep === 1}
+        <div class:hidden={currentStep !== 1}>
           <div class="space-y-4">
             <div>
               <label for="name" class="label text-sm sm:text-base">Nome completo *</label>
@@ -303,10 +318,10 @@ function removeFile() {
               {/if}
             </div>
           </div>
-        {/if}
+        </div>
 
         <!-- Step 2: Organization -->
-        {#if currentStep === 2}
+        <div class:hidden={currentStep !== 2}>
           <div class="space-y-4">
             <div>
               <label class="label text-sm sm:text-base">Tipo de organização *</label>
@@ -406,10 +421,10 @@ function removeFile() {
               </div>
             </div>
           </div>
-        {/if}
+        </div>
 
         <!-- Step 3: Cultural Areas -->
-        {#if currentStep === 3}
+        <div class:hidden={currentStep !== 3}>
           <div>
             <label class="label text-sm sm:text-base">Áreas culturais de atuação *</label>
             <p class="text-xs sm:text-sm text-gray-500 mt-1">Selecione todas que se aplicam</p>
@@ -420,6 +435,8 @@ function removeFile() {
                 >
                   <input
                     type="checkbox"
+                    name="cultural_areas"
+                    value={value}
                     checked={$form.cultural_areas?.includes(value as never)}
                     onchange={() => toggleArrayValue('cultural_areas', value)}
                     class="sr-only"
@@ -432,10 +449,10 @@ function removeFile() {
               <p class="mt-2 text-sm text-red-600">{$errors.cultural_areas}</p>
             {/if}
           </div>
-        {/if}
+        </div>
 
         <!-- Step 4: Grant Interest -->
-        {#if currentStep === 4}
+        <div class:hidden={currentStep !== 4}>
           <div>
             <label class="label text-sm sm:text-base">Editais de interesse *</label>
             <p class="text-xs sm:text-sm text-gray-500 mt-1">Selecione todos que deseja</p>
@@ -446,6 +463,8 @@ function removeFile() {
                 >
                   <input
                     type="checkbox"
+                    name="interested_grants"
+                    value={value}
                     checked={$form.interested_grants?.includes(value as never)}
                     onchange={() => toggleArrayValue('interested_grants', value)}
                     class="sr-only"
@@ -467,10 +486,10 @@ function removeFile() {
               <p class="mt-2 text-sm text-red-600">{$errors.interested_grants}</p>
             {/if}
           </div>
-        {/if}
+        </div>
 
         <!-- Step 5: Project -->
-        {#if currentStep === 5}
+        <div class:hidden={currentStep !== 5}>
           <div class="space-y-4">
             <!-- Input mode toggle -->
             <div>
@@ -606,7 +625,7 @@ function removeFile() {
               </div>
             {/if}
           </div>
-        {/if}
+        </div>
 
         <!-- Navigation -->
         <div class="mt-6 sm:mt-8 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">

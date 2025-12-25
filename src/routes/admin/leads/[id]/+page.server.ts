@@ -1,7 +1,6 @@
 import { error, fail } from '@sveltejs/kit';
 import { calculateEligibility, getEligibleGrantNames, getOverallScore } from '$lib/scoring';
 import {
-	type AIEligibilityAnalysis,
 	calculateAIEligibility,
 	getAllProgramPrerequisites
 } from '$lib/server/services/ai-eligibility';

@@ -1,9 +1,10 @@
-import { fail, message, superValidate } from 'sveltekit-superforms';
+import { fail, redirect } from '@sveltejs/kit';
+import { superValidate } from 'sveltekit-superforms';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { leadFormSchema } from '$lib/schemas/lead';
 import { calculateEligibility, getEligibleGrantNames, getOverallScore } from '$lib/scoring';
 import { parseAndAnalyzeDocument } from '$lib/server/services/document-parser';
-import type { Grant, Json } from '$lib/supabase/types';
+import type { Grant, Json, Lead } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
@@ -18,7 +19,12 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const form = await superValidate(formData, zod4(leadFormSchema));
 
+		console.log('Form data received:', form.data);
+		console.log('Form valid:', form.valid);
+		console.log('Form errors:', form.errors);
+
 		if (!form.valid) {
+			console.log('Form validation failed');
 			return fail(400, { form });
 		}
 
@@ -26,7 +32,10 @@ export const actions: Actions = {
 		const { data: grants } = await locals.supabase.from('grants').select('*').eq('is_active', true);
 
 		// Calculate eligibility score
-		const eligibilityResults = calculateEligibility(form.data as any, (grants ?? []) as Grant[]);
+		const eligibilityResults = calculateEligibility(
+			form.data as Partial<Lead>,
+			(grants ?? []) as Grant[]
+		);
 		const eligibilityScore = getOverallScore(eligibilityResults);
 		const eligibleGrants = getEligibleGrantNames(eligibilityResults);
 
@@ -101,6 +110,7 @@ export const actions: Actions = {
 			});
 		}
 
-		return message(form, 'success');
+		// Redirect to success page
+		throw redirect(303, '/register/success');
 	}
 };
