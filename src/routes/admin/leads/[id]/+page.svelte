@@ -14,6 +14,10 @@ const { data, form }: { data: PageData; form: ActionData } = $props();
 
 let showNoteForm = $state(false);
 let showTaskForm = $state(false);
+let isAnalyzingAI = $state(false);
+let showAIResults = $state(false);
+let aiResults = $state<typeof form extends { aiAnalysis: infer T } ? T : null>(null);
+let selectedProgram = $state<string | null>(null);
 
 function formatDate(dateStr: string) {
 	return new Date(dateStr).toLocaleDateString('pt-BR', {
@@ -508,8 +512,42 @@ const priorityLabels: Record<string, string> = {
 		<div class="space-y-6">
 			<!-- Eligibility Score -->
 			<div class="card">
-				<div class="card-header">
+				<div class="card-header flex items-center justify-between">
 					<h2 class="card-title">Elegibilidade</h2>
+					<form
+						method="POST"
+						action="?/analyzeWithAI"
+						use:enhance={() => {
+							isAnalyzingAI = true
+							return async ({ result, update }) => {
+								isAnalyzingAI = false
+								if (result.type === 'success' && result.data?.aiAnalysis) {
+									aiResults = result.data.aiAnalysis
+									showAIResults = true
+								}
+								await update()
+							}
+						}}
+					>
+						<button
+							type="submit"
+							class="btn btn-primary btn-sm gap-2"
+							disabled={isAnalyzingAI}
+						>
+							{#if isAnalyzingAI}
+								<svg class="h-4 w-4 animate-spin" fill="none" viewBox="0 0 24 24">
+									<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+								</svg>
+								Analisando...
+							{:else}
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+								</svg>
+								Analisar com IA
+							{/if}
+						</button>
+					</form>
 				</div>
 
 				<div class="text-center mb-6">
@@ -526,75 +564,252 @@ const priorityLabels: Record<string, string> = {
 					<p class="text-sm text-muted-foreground mt-3">Score Geral de Elegibilidade</p>
 				</div>
 
-				<div class="space-y-4">
-					{#each data.eligibility as result}
-						<div class="p-4 rounded-lg border border-border">
-							<div class="flex items-center justify-between mb-3">
-								<span class="font-medium text-sm text-foreground">{result.grantName}</span>
-								<span
-									class="badge badge-sm {result.eligible
-										? 'badge-success'
-										: 'bg-muted text-muted-foreground'}"
-								>
-									{result.score}%
-								</span>
-							</div>
-							<div class="h-2 bg-muted rounded-full overflow-hidden">
-								<div
-									class="h-full transition-all duration-300 {result.score >= 70
-										? 'bg-success'
-										: result.score >= 50
-											? 'bg-warning'
-											: 'bg-destructive'}"
-									style="width: {result.score}%"
-								></div>
-							</div>
-							{#if result.requirements.notMet.length > 0}
-								<ul class="mt-3 space-y-1">
-									{#each result.requirements.notMet as req}
-										<li class="flex items-start gap-2 text-xs text-destructive">
-											<svg
-												class="h-3 w-3 mt-0.5 flex-shrink-0"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M6 18L18 6M6 6l12 12"
-												/>
-											</svg>
-											{req}
-										</li>
-									{/each}
-								</ul>
-							{/if}
-							{#if result.requirements.met && result.requirements.met.length > 0}
-								<ul class="mt-2 space-y-1">
-									{#each result.requirements.met as req}
-										<li class="flex items-start gap-2 text-xs text-success">
-											<svg
-												class="h-3 w-3 mt-0.5 flex-shrink-0"
-												fill="none"
-												viewBox="0 0 24 24"
-												stroke="currentColor"
-											>
-												<path
-													stroke-linecap="round"
-													stroke-linejoin="round"
-													stroke-width="2"
-													d="M5 13l4 4L19 7"
-												/>
-											</svg>
-											{req}
-										</li>
-									{/each}
-								</ul>
-							{/if}
+				<!-- AI Analysis Results -->
+				{#if showAIResults && aiResults}
+					<div class="mb-6 p-4 rounded-lg bg-primary/5 border border-primary/20">
+						<div class="flex items-center justify-between mb-3">
+							<h3 class="font-semibold text-sm text-primary flex items-center gap-2">
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+								</svg>
+								Analise com IA
+							</h3>
+							<button
+								type="button"
+								class="text-muted-foreground hover:text-foreground"
+								onclick={() => showAIResults = false}
+							>
+								<svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+								</svg>
+							</button>
 						</div>
-					{/each}
+
+						{#if aiResults.bestProgram}
+							<p class="text-sm text-muted-foreground mb-3">
+								Melhor programa: <span class="font-medium text-foreground">{aiResults.bestProgram}</span>
+							</p>
+						{/if}
+
+						{#if aiResults.generalRecommendations?.length > 0}
+							<div class="space-y-1">
+								<p class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Recomendacoes</p>
+								<ul class="space-y-1">
+									{#each aiResults.generalRecommendations as rec}
+										<li class="text-xs text-muted-foreground flex items-start gap-2">
+											<svg class="h-3 w-3 mt-0.5 text-primary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
+											</svg>
+											{rec}
+										</li>
+									{/each}
+								</ul>
+							</div>
+						{/if}
+					</div>
+				{/if}
+
+				<!-- Program Prerequisites Tabs -->
+				<div class="mb-4">
+					<div class="flex flex-wrap gap-1 mb-3">
+						{#each Object.entries(data.programPrerequisites) as [id, program]}
+							<button
+								type="button"
+								class="px-2 py-1 text-xs rounded-md transition-colors {selectedProgram === id ? 'bg-primary text-primary-foreground' : 'bg-muted hover:bg-muted/80 text-muted-foreground'}"
+								onclick={() => selectedProgram = selectedProgram === id ? null : id}
+							>
+								{program.name}
+							</button>
+						{/each}
+					</div>
+
+					{#if selectedProgram && data.programPrerequisites[selectedProgram]}
+						{@const program = data.programPrerequisites[selectedProgram]}
+						<div class="p-3 rounded-lg bg-muted/50 border border-border text-xs space-y-3">
+							<div>
+								<p class="font-medium text-foreground">{program.name}</p>
+								<p class="text-muted-foreground">{program.description}</p>
+							</div>
+							<div>
+								<p class="font-medium text-foreground mb-1">Requisitos:</p>
+								<ul class="space-y-1">
+									{#each program.detailedRequirements as req}
+										<li class="flex items-start gap-1.5 text-muted-foreground">
+											<svg class="h-3 w-3 mt-0.5 text-primary flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+												<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+											</svg>
+											{req}
+										</li>
+									{/each}
+								</ul>
+							</div>
+							<div>
+								<p class="font-medium text-foreground mb-1">Vantagens:</p>
+								<ul class="space-y-1">
+									{#each program.advantages as adv}
+										<li class="flex items-start gap-1.5 text-success">
+											<svg class="h-3 w-3 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+											</svg>
+											{adv}
+										</li>
+									{/each}
+								</ul>
+							</div>
+							<a
+								href={program.officialUrl}
+								target="_blank"
+								rel="noopener noreferrer"
+								class="inline-flex items-center gap-1 text-primary hover:underline"
+							>
+								Ver site oficial
+								<svg class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+								</svg>
+							</a>
+						</div>
+					{/if}
+				</div>
+
+				<!-- Per-program eligibility results -->
+				<div class="space-y-4">
+					{#if showAIResults && aiResults?.programs}
+						{#each aiResults.programs as result}
+							<div class="p-4 rounded-lg border border-border {result.eligible ? 'bg-success/5 border-success/20' : ''}">
+								<div class="flex items-center justify-between mb-2">
+									<span class="font-medium text-sm text-foreground">{result.programName}</span>
+									<div class="flex items-center gap-2">
+										<span class="text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground capitalize">
+											{result.confidence}
+										</span>
+										<span
+											class="badge badge-sm {result.eligible
+												? 'badge-success'
+												: 'bg-muted text-muted-foreground'}"
+										>
+											{result.score}%
+										</span>
+									</div>
+								</div>
+								<div class="h-2 bg-muted rounded-full overflow-hidden mb-2">
+									<div
+										class="h-full transition-all duration-300 {result.score >= 70
+											? 'bg-success'
+											: result.score >= 50
+												? 'bg-warning'
+												: 'bg-destructive'}"
+										style="width: {result.score}%"
+									></div>
+								</div>
+								{#if result.summary}
+									<p class="text-xs text-muted-foreground mb-2">{result.summary}</p>
+								{/if}
+								{#if result.notMetRequirements?.length > 0}
+									<ul class="space-y-1">
+										{#each result.notMetRequirements as req}
+											<li class="flex items-start gap-2 text-xs text-destructive">
+												<svg class="h-3 w-3 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+												</svg>
+												{req}
+											</li>
+										{/each}
+									</ul>
+								{/if}
+								{#if result.metRequirements?.length > 0}
+									<ul class="mt-2 space-y-1">
+										{#each result.metRequirements as req}
+											<li class="flex items-start gap-2 text-xs text-success">
+												<svg class="h-3 w-3 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+													<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+												</svg>
+												{req}
+											</li>
+										{/each}
+									</ul>
+								{/if}
+								{#if result.recommendations?.length > 0}
+									<div class="mt-3 pt-2 border-t border-border">
+										<p class="text-xs font-medium text-muted-foreground mb-1">Recomendacoes:</p>
+										<ul class="space-y-1">
+											{#each result.recommendations as rec}
+												<li class="text-xs text-primary">{rec}</li>
+											{/each}
+										</ul>
+									</div>
+								{/if}
+							</div>
+						{/each}
+					{:else}
+						{#each data.eligibility as result}
+							<div class="p-4 rounded-lg border border-border">
+								<div class="flex items-center justify-between mb-3">
+									<span class="font-medium text-sm text-foreground">{result.grantName}</span>
+									<span
+										class="badge badge-sm {result.eligible
+											? 'badge-success'
+											: 'bg-muted text-muted-foreground'}"
+									>
+										{result.score}%
+									</span>
+								</div>
+								<div class="h-2 bg-muted rounded-full overflow-hidden">
+									<div
+										class="h-full transition-all duration-300 {result.score >= 70
+											? 'bg-success'
+											: result.score >= 50
+												? 'bg-warning'
+												: 'bg-destructive'}"
+										style="width: {result.score}%"
+									></div>
+								</div>
+								{#if result.requirements.notMet.length > 0}
+									<ul class="mt-3 space-y-1">
+										{#each result.requirements.notMet as req}
+											<li class="flex items-start gap-2 text-xs text-destructive">
+												<svg
+													class="h-3 w-3 mt-0.5 flex-shrink-0"
+													fill="none"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M6 18L18 6M6 6l12 12"
+													/>
+												</svg>
+												{req}
+											</li>
+										{/each}
+									</ul>
+								{/if}
+								{#if result.requirements.met && result.requirements.met.length > 0}
+									<ul class="mt-2 space-y-1">
+										{#each result.requirements.met as req}
+											<li class="flex items-start gap-2 text-xs text-success">
+												<svg
+													class="h-3 w-3 mt-0.5 flex-shrink-0"
+													fill="none"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+												>
+													<path
+														stroke-linecap="round"
+														stroke-linejoin="round"
+														stroke-width="2"
+														d="M5 13l4 4L19 7"
+													/>
+												</svg>
+												{req}
+											</li>
+										{/each}
+									</ul>
+								{/if}
+							</div>
+						{/each}
+					{/if}
 				</div>
 			</div>
 
