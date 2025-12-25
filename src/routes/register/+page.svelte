@@ -116,7 +116,9 @@ $effect(() => {
 		previousState = stateCode;
 
 		loadingCities = true;
-		fetch(`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateCode}/municipios?orderBy=nome`)
+		fetch(
+			`https://servicodados.ibge.gov.br/api/v1/localidades/estados/${stateCode}/municipios?orderBy=nome`
+		)
 			.then((res) => res.json())
 			.then((data: City[]) => {
 				cities = data;

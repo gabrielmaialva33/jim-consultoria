@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Footer from '$lib/components/landing/Footer.svelte';
+import Footer from '$lib/components/landing/Footer.svelte';
 </script>
 
 <svelte:head>
