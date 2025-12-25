@@ -143,7 +143,7 @@
 				</p>
 				<div class="mt-4 rounded-lg bg-gray-100 p-4">
 					<p><strong>JIM Consultoria</strong></p>
-					<p>E-mail: <a href="mailto:contato@jimconsultoria.com.br" class="text-brand-600 hover:text-brand-700">contato@jimconsultoria.com.br</a></p>
+					<p>E-mail: <a href="mailto:jimconsultoria@mahina.cloud" class="text-brand-600 hover:text-brand-700">jimconsultoria@mahina.cloud</a></p>
 				</div>
 			</section>
 		</div>

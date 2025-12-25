@@ -36,8 +36,8 @@
 						</div>
 						<div>
 							<h3 class="font-semibold text-gray-900">E-mail</h3>
-							<a href="mailto:contato@jimconsultoria.com.br" class="text-brand-600 hover:text-brand-700">
-								contato@jimconsultoria.com.br
+							<a href="mailto:jimconsultoria@mahina.cloud" class="text-brand-600 hover:text-brand-700">
+								jimconsultoria@mahina.cloud
 							</a>
 						</div>
 					</div>
@@ -52,8 +52,8 @@
 						</div>
 						<div>
 							<h3 class="font-semibold text-gray-900">WhatsApp</h3>
-							<a href="https://wa.me/5511999999999" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:text-green-700">
-								(11) 99999-9999
+							<a href="https://wa.me/5515988051147" target="_blank" rel="noopener noreferrer" class="text-green-600 hover:text-green-700">
+								(15) 98805-1147
 							</a>
 						</div>
 					</div>
@@ -68,8 +68,8 @@
 						</div>
 						<div>
 							<h3 class="font-semibold text-gray-900">LinkedIn</h3>
-							<a href="https://linkedin.com/company/jimconsultoria" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700">
-								@jimconsultoria
+							<a href="https://linkedin.com/company/jimconsultoriacb" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700">
+								@jimconsultoriacb
 							</a>
 						</div>
 					</div>
@@ -84,8 +84,8 @@
 						</div>
 						<div>
 							<h3 class="font-semibold text-gray-900">Instagram</h3>
-							<a href="https://instagram.com/jimconsultoria" target="_blank" rel="noopener noreferrer" class="text-pink-600 hover:text-pink-700">
-								@jimconsultoria
+							<a href="https://instagram.com/jimconsultoriacb" target="_blank" rel="noopener noreferrer" class="text-pink-600 hover:text-pink-700">
+								@jimconsultoriacb
 							</a>
 						</div>
 					</div>
