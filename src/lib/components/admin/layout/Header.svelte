@@ -3,7 +3,7 @@ import { enhance } from '$app/forms';
 import { page } from '$app/stores';
 
 interface Props {
-	user?: { email: string } | null;
+	user?: { email?: string } | null;
 	onMenuToggle?: () => void;
 }
 

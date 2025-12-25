@@ -1,4 +1,5 @@
 import { fail } from '@sveltejs/kit';
+import type { LeadStatus } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -28,7 +29,10 @@ export const actions: Actions = {
 			return fail(400, { error: 'Lead ID e status são obrigatórios.' });
 		}
 
-		const { error } = await locals.supabase.from('leads').update({ status }).eq('id', leadId);
+		const { error } = await locals.supabase
+			.from('leads')
+			.update({ status: status as LeadStatus })
+			.eq('id', leadId);
 
 		if (error) {
 			console.error('Error updating lead status:', error);

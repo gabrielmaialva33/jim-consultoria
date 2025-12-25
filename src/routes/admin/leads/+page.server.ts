@@ -1,4 +1,5 @@
 import { fail } from '@sveltejs/kit';
+import type { LeadStatus } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url, locals }) => {
@@ -29,7 +30,7 @@ export const load: PageServerLoad = async ({ url, locals }) => {
 		.range((page - 1) * perPage, page * perPage - 1);
 
 	if (status) {
-		query = query.eq('status', status);
+		query = query.eq('status', status as LeadStatus);
 	}
 
 	if (search) {
@@ -66,7 +67,10 @@ export const actions: Actions = {
 
 		// Use Service pattern if complex validation was needed.
 		// For direct DB updates, direct call is fine but we must ensure RLS.
-		const { error } = await locals.supabase.from('leads').update({ status }).eq('id', leadId);
+		const { error } = await locals.supabase
+			.from('leads')
+			.update({ status: status as LeadStatus })
+			.eq('id', leadId);
 
 		if (error) {
 			console.error('Error updating lead status:', error);

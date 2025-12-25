@@ -5,7 +5,7 @@ import {
 	calculateAIEligibility,
 	getAllProgramPrerequisites
 } from '$lib/server/services/ai-eligibility';
-import type { Grant } from '$lib/supabase/types';
+import type { Grant, Json, TaskPriority, TaskStatus } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -91,7 +91,7 @@ export const actions: Actions = {
 			lead_id: params.id,
 			title,
 			due_date: dueDate || null,
-			priority
+			priority: priority as TaskPriority
 		});
 
 		if (insertError) {
@@ -106,7 +106,7 @@ export const actions: Actions = {
 		const taskId = formData.get('taskId') as string;
 		const currentStatus = formData.get('currentStatus') as string;
 
-		const newStatus = currentStatus === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
+		const newStatus: TaskStatus = currentStatus === 'COMPLETED' ? 'PENDING' : 'COMPLETED';
 		const completedAt = newStatus === 'COMPLETED' ? new Date().toISOString() : null;
 
 		const { error: updateError } = await locals.supabase
@@ -214,7 +214,7 @@ export const actions: Actions = {
 				lead_id: params.id,
 				activity_type: 'NOTE',
 				content: `Análise de elegibilidade com IA realizada. Score geral: ${aiAnalysis.overallScore}/100. Melhor programa: ${aiAnalysis.bestProgram || 'N/A'}.`,
-				metadata: { aiAnalysis }
+				metadata: { aiAnalysis } as unknown as Json
 			});
 
 			return {

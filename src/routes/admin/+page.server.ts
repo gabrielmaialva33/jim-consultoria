@@ -1,3 +1,4 @@
+import type { Grant, Lead } from '$lib/supabase/types';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -7,8 +8,11 @@ export const load: PageServerLoad = async ({ locals }) => {
 		locals.supabase.from('grants').select('id, name, closes_at, is_active').eq('is_active', true)
 	]);
 
-	const leads = leadsResult.data ?? [];
-	const grants = grantsResult.data ?? [];
+	const leads = (leadsResult.data ?? []) as Pick<Lead, 'id' | 'status' | 'created_at'>[];
+	const grants = (grantsResult.data ?? []) as Pick<
+		Grant,
+		'id' | 'name' | 'closes_at' | 'is_active'
+	>[];
 
 	// Calculate stats
 	const totalLeads = leads.length;

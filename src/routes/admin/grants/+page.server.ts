@@ -1,4 +1,5 @@
 import { fail } from '@sveltejs/kit';
+import type { GrantInsert, GrantType, GrantUpdate } from '$lib/supabase/types';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
@@ -20,10 +21,10 @@ export const actions: Actions = {
 	create: async ({ request, locals }) => {
 		const formData = await request.formData();
 
-		const grantData = {
+		const grantData: GrantInsert = {
 			name: formData.get('name') as string,
 			agency: formData.get('agency') as string,
-			grant_type: formData.get('grant_type') as string,
+			grant_type: formData.get('grant_type') as GrantType,
 			opens_at: (formData.get('opens_at') as string) || null,
 			closes_at: (formData.get('closes_at') as string) || null,
 			total_budget: formData.get('total_budget')
@@ -54,10 +55,10 @@ export const actions: Actions = {
 		const formData = await request.formData();
 		const grantId = formData.get('id') as string;
 
-		const grantData = {
+		const grantData: GrantUpdate = {
 			name: formData.get('name') as string,
 			agency: formData.get('agency') as string,
-			grant_type: formData.get('grant_type') as string,
+			grant_type: formData.get('grant_type') as GrantType,
 			opens_at: (formData.get('opens_at') as string) || null,
 			closes_at: (formData.get('closes_at') as string) || null,
 			total_budget: formData.get('total_budget')
